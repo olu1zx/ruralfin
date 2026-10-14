@@ -161,6 +161,22 @@ precisa de sua própria conexão de banco na nuvem.
 
 Repositório do projeto: https://github.com/olu1zx/ruralfin
 
+Site publicado: https://ruralfin-n2.vercel.app
+
+O banco online `ruralfin-db` foi criado no Neon (plano Free), com as tabelas da
+etapa 2. Ele é separado do banco deste computador. O acesso ao site usa o usuário
+`admin`; a senha gerada está somente no arquivo local `credenciais-site.txt`.
+Esse arquivo não é enviado ao GitHub nem à hospedagem.
+
+Para entregar no Classroom, use os links do repositório e do site acima. O
+avaliador precisará das credenciais de entrada para utilizar o sistema.
+
+Verificação da publicação: login, conexão PostgreSQL, consulta de cadastros,
+lançamento de conta e parcela, bloqueio de duplicata, ordenação, inativação e
+reativação passaram no ambiente online. Há uma conta `DEMO-ONLINE-001` com dados
+fictícios para demonstração. A extração com Gemini foi preservada; o teste com
+PDF real depende de uma chave fornecida pelo usuário.
+
 1. Publique somente os arquivos do projeto no GitHub. `.env`, `.venv`, banco local,
    backups e credenciais já estão ignorados.
 2. Importe o repositório na Vercel, no projeto RuralFin. Se publicar a pasta inteira

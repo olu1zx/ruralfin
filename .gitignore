@@ -11,5 +11,6 @@ __pycache__/
 tmp/
 .agents/
 skills-lock.json
+credenciais-site.txt
 
 !.env.example
