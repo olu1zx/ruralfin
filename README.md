@@ -53,48 +53,35 @@ o filtro **Inativos** permite encontrar e reativar registros.
 - PDFs ficam em BYTEA na tabela documentos, vinculados à conta. Assim, o backup
   do banco também inclui os documentos.
 
-## Executar neste computador
+## Execução local — opcional
 
-A instância local está na pasta `.local-postgres`, com acesso somente pelo
-endereço 127.0.0.1 e porta 5433. O banco e o usuário da aplicação são `ruralfin`
-e `ruralfin_app`. A conexão completa está no `.env`, que não vai para o GitHub.
-
-No PowerShell, dentro da pasta do projeto:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\iniciar.ps1
-```
-
-Abra **http://127.0.0.1:5001**. O terminal precisa permanecer aberto enquanto usa
-o site. Ctrl+C encerra o site. Para encerrar também o banco:
-
-```powershell
-.\.venv\Scripts\python.exe -m flask --app app banco-local parar
-```
-
-Na tela de importação, informe uma chave do Gemini ou configure `GEMINI_API_KEY`
-no `.env`. A chave digitada na tela não é gravada no banco. Os modelos podem ser
-alterados na variável `GEMINI_MODELS` sem editar o Python.
-
-## Preparar outro computador
-
-Instale Python 3.12+ e PostgreSQL. Na pasta do projeto:
+Para estudar ou alterar o projeto no Windows, instale Python 3.12+ e PostgreSQL 16.
+Na primeira execução, abra o PowerShell na pasta do projeto e prepare o ambiente:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m flask --app app banco-local configurar
 .\.venv\Scripts\python.exe -m flask --app app init-db
+```
+
+Depois da preparação, basta iniciar o sistema com:
+
+```powershell
 powershell -ExecutionPolicy Bypass -File .\iniciar.ps1
 ```
 
-`flask --app app banco-local configurar` usa a instalação padrão do PostgreSQL 16 no Windows
-e cria uma instância própria para este projeto. Se a instalação for diferente,
-defina `POSTGRES_BIN` com o caminho da pasta `bin`.
+Abra **http://127.0.0.1:5001** e mantenha o terminal aberto. Use Ctrl+C para encerrar
+o site e `.\.venv\Scripts\python.exe -m flask --app app banco-local parar` para parar o banco.
 
-Para usar um servidor PostgreSQL já existente, crie o banco pelo pgAdmin, copie
-`.env.example` para `.env`, preencha PGHOST, PGPORT, PGDATABASE, PGUSER e PGPASSWORD
-e execute `flask init-db`. Não é necessário usar a instância local nesse caso.
+O banco local fica em `.local-postgres`, na porta 5433; a conexão fica no `.env`,
+que não vai para o GitHub. Se o PostgreSQL estiver instalado em outro caminho,
+defina `POSTGRES_BIN` com a pasta `bin`. Para usar um banco existente, configure
+os campos PGHOST, PGPORT, PGDATABASE, PGUSER e PGPASSWORD no `.env`, usando
+`.env.example` como modelo, e execute `init-db` sem configurar a instância local.
+
+Para extrair PDFs, informe sua chave do Gemini na interface ou configure
+`GEMINI_API_KEY` no `.env`.
 
 ## Consultar pelo pgAdmin
 
