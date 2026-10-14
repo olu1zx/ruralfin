@@ -96,6 +96,11 @@ Abra **Servers > RuralFin local > Databases > ruralfin > Schemas > public > Tabl
 Clique com o botão direito em uma tabela e use **View/Edit Data > All Rows**.
 Para consultas SQL, abra **Query Tool** no banco `ruralfin`:
 
+O servidor **RuralFin online (Neon)** também foi cadastrado neste computador.
+Ele permite consultar as tabelas utilizadas pelo site hospedado, com conexão
+TLS. Expanda seu banco em **Databases > Schemas > public > Tables**. O servidor
+local e o online mantêm dados separados.
+
 ```sql
 SELECT * FROM pessoas ORDER BY id;
 SELECT * FROM classificacao ORDER BY id;
