@@ -32,7 +32,6 @@
       <button class="primary" type="submit">Buscar</button>
       <button type="button" id="todosBtn">Todos os ativos</button>
     </form>
-    <p class="hint">A lista começa vazia. Use Buscar ou Todos os ativos. Clique no título de uma coluna para ordenar.</p>
     <div id="cadastroStatus" class="status" role="status" aria-live="polite"></div>
   </section>
   <section class="card">
@@ -342,7 +341,7 @@ if(recursoCadastro!=='contas'){
   });
 }
 window.addEventListener('contaSalva',()=>{if(buscaRealizada)carregarTabela();});
-cabecalhoTabela();vazio('Use Buscar ou Todos os ativos para carregar os registros.');
+cabecalhoTabela();
 
 </script>
 </body></html>
