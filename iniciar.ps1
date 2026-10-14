@@ -5,7 +5,7 @@ if (-not (Test-Path -LiteralPath $ruralPython)) {
     throw 'Crie o ambiente Python e instale requirements.txt conforme o README.'
 }
 if (Test-Path -LiteralPath '.local-postgres\data\PG_VERSION') {
-    & $ruralPython banco_local.py iniciar
+    & $ruralPython -m flask --app app banco-local iniciar
     if ($LASTEXITCODE -ne 0) { throw 'Não foi possível iniciar o banco.' }
 }
 & $ruralPython -m flask --app app init-db

@@ -1,10 +1,364 @@
+{% if pagina is defined and pagina == 'login' %}
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Entrar - RuralFin</title><style>
+:root{--bg:#f7f3e8;--surface:#fffdf6;--ink:#2a2519;--muted:#7a6f5c;--border:#e6dcc2;--forest:#2f5d45;--forest-dark:#1f4433;--forest-tint:#e7f0e9;--wheat:#c9932f;--wheat-tint:#f7ecd3;--err:#a8422f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;padding:0 16px 48px}.wrap{max-width:1100px;margin:auto}.marca{background:var(--forest-dark);padding:24px;color:#fffdf6;border-radius:0 0 16px 16px;margin-bottom:22px}.marca h1{font-family:Fraunces,Georgia,serif;margin:0;font-size:28px}.marca p{color:#d9e6dd;margin:6px 0 0}.nav{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.nav a{padding:9px 13px;border:1px solid var(--border);border-radius:7px;text-decoration:none;color:var(--forest-dark);background:var(--surface);font-weight:600}.nav a[aria-current=page]{background:var(--forest);color:white}.nav form{margin-left:auto}.card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--forest);border-radius:10px;padding:20px;margin-bottom:16px}h2{font-family:Fraunces,Georgia,serif;font-size:21px;margin:0 0 16px}h3{font-size:15px;margin:18px 0 10px}label{display:block;font-weight:600;font-size:13px;margin:0 0 6px}input,select,textarea{font:inherit;width:100%;padding:10px;border:1px solid var(--border);border-radius:7px;background:#fffef9;color:var(--ink)}input:focus,select:focus,textarea:focus{outline:2px solid var(--forest);outline-offset:1px}textarea{resize:vertical;min-height:70px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}button,.button{font:inherit;border:1px solid var(--border);border-radius:7px;padding:10px 16px;cursor:pointer;color:var(--forest-dark);background:var(--forest-tint);font-weight:600;text-decoration:none}button.primary,.button.primary{color:white;background:var(--forest);border-color:var(--forest)}button.danger{background:#faeee9;color:var(--err)}button:disabled{opacity:.5;cursor:not-allowed}button:hover:not(:disabled){filter:brightness(.96)}.muted,.hint{color:var(--muted);font-size:12px;line-height:1.6}.status{margin-top:12px;line-height:1.6}.status.err{color:var(--err)}.status.ok{color:var(--forest)}.hidden{display:none!important}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid var(--border);padding:12px 10px;text-align:left;vertical-align:middle}th button{padding:0;border:0;background:none;text-align:left}td button{padding:6px 10px;font-size:12px;margin:2px}.badge{display:inline-block;padding:4px 9px;background:var(--wheat-tint);border-radius:12px;font-size:11px;font-weight:700}.consulta{padding:12px;background:var(--forest-tint);border:1px solid var(--border);border-radius:7px;margin-top:8px}.consulta.pendente{background:var(--wheat-tint)}.consulta strong,.consulta span{display:block;margin:3px 0}.parcelas{display:grid;grid-template-columns:50px 1fr 1fr auto;gap:8px;align-items:end;margin:10px 0}.parcelas .numero{align-self:center}.search{display:grid;grid-template-columns:2fr 1fr auto auto;gap:10px;align-items:end}.search-actions{display:flex;gap:8px}.pagination{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px}.editor{scroll-margin-top:20px}.notice{padding:12px;border-left:3px solid var(--wheat);background:var(--wheat-tint);line-height:1.6}.check-rows{margin-top:14px}.inline{display:inline-block}a{color:var(--forest-dark)}@media(max-width:650px){.grid,.search{grid-template-columns:1fr}.full{grid-column:auto}.parcelas{grid-template-columns:30px 1fr}.parcelas button{grid-column:2}.nav form{margin-left:0}.pagination{flex-wrap:wrap}.card{padding:15px}}
+
+</style></head><body><main class="wrap" style="max-width:460px"><header class="marca"><h1>RuralFin</h1><p>Controle financeiro rural</p></header><section class="card"><h2>Entrar no sistema</h2><form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><label for="usuario">Usuário</label><input id="usuario" name="usuario" autocomplete="username" required><br><br><label for="senha">Senha</label><input type="password" id="senha" name="senha" autocomplete="current-password" required><div class="actions"><button class="primary">Entrar</button></div>{% if erro %}<p class="status err" role="alert">{{ erro }}</p>{% endif %}</form></section></main></body></html>
+
+{% elif recurso is defined %}
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="csrf-token" content="{{ csrf_token }}"><title>{{ titulo }} - RuralFin</title>
+<style>
+:root{--bg:#f7f3e8;--surface:#fffdf6;--ink:#2a2519;--muted:#7a6f5c;--border:#e6dcc2;--forest:#2f5d45;--forest-dark:#1f4433;--forest-tint:#e7f0e9;--wheat:#c9932f;--wheat-tint:#f7ecd3;--err:#a8422f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;padding:0 16px 48px}.wrap{max-width:1100px;margin:auto}.marca{background:var(--forest-dark);padding:24px;color:#fffdf6;border-radius:0 0 16px 16px;margin-bottom:22px}.marca h1{font-family:Fraunces,Georgia,serif;margin:0;font-size:28px}.marca p{color:#d9e6dd;margin:6px 0 0}.nav{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.nav a{padding:9px 13px;border:1px solid var(--border);border-radius:7px;text-decoration:none;color:var(--forest-dark);background:var(--surface);font-weight:600}.nav a[aria-current=page]{background:var(--forest);color:white}.nav form{margin-left:auto}.card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--forest);border-radius:10px;padding:20px;margin-bottom:16px}h2{font-family:Fraunces,Georgia,serif;font-size:21px;margin:0 0 16px}h3{font-size:15px;margin:18px 0 10px}label{display:block;font-weight:600;font-size:13px;margin:0 0 6px}input,select,textarea{font:inherit;width:100%;padding:10px;border:1px solid var(--border);border-radius:7px;background:#fffef9;color:var(--ink)}input:focus,select:focus,textarea:focus{outline:2px solid var(--forest);outline-offset:1px}textarea{resize:vertical;min-height:70px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}button,.button{font:inherit;border:1px solid var(--border);border-radius:7px;padding:10px 16px;cursor:pointer;color:var(--forest-dark);background:var(--forest-tint);font-weight:600;text-decoration:none}button.primary,.button.primary{color:white;background:var(--forest);border-color:var(--forest)}button.danger{background:#faeee9;color:var(--err)}button:disabled{opacity:.5;cursor:not-allowed}button:hover:not(:disabled){filter:brightness(.96)}.muted,.hint{color:var(--muted);font-size:12px;line-height:1.6}.status{margin-top:12px;line-height:1.6}.status.err{color:var(--err)}.status.ok{color:var(--forest)}.hidden{display:none!important}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid var(--border);padding:12px 10px;text-align:left;vertical-align:middle}th button{padding:0;border:0;background:none;text-align:left}td button{padding:6px 10px;font-size:12px;margin:2px}.badge{display:inline-block;padding:4px 9px;background:var(--wheat-tint);border-radius:12px;font-size:11px;font-weight:700}.consulta{padding:12px;background:var(--forest-tint);border:1px solid var(--border);border-radius:7px;margin-top:8px}.consulta.pendente{background:var(--wheat-tint)}.consulta strong,.consulta span{display:block;margin:3px 0}.parcelas{display:grid;grid-template-columns:50px 1fr 1fr auto;gap:8px;align-items:end;margin:10px 0}.parcelas .numero{align-self:center}.search{display:grid;grid-template-columns:2fr 1fr auto auto;gap:10px;align-items:end}.search-actions{display:flex;gap:8px}.pagination{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px}.editor{scroll-margin-top:20px}.notice{padding:12px;border-left:3px solid var(--wheat);background:var(--wheat-tint);line-height:1.6}.check-rows{margin-top:14px}.inline{display:inline-block}a{color:var(--forest-dark)}@media(max-width:650px){.grid,.search{grid-template-columns:1fr}.full{grid-column:auto}.parcelas{grid-template-columns:30px 1fr}.parcelas button{grid-column:2}.nav form{margin-left:0}.pagination{flex-wrap:wrap}.card{padding:15px}}
+
+</style></head>
+<body><main class="wrap">
+  <header class="marca"><h1>RuralFin</h1><p>Controle financeiro rural · {{ titulo }}</p></header>
+  <nav class="nav" aria-label="Navegação principal">
+  <a href="/" {% if request.path == '/' %}aria-current="page"{% endif %}>Importar nota</a>
+  <a href="/cadastros/pessoas" {% if request.path == '/cadastros/pessoas' %}aria-current="page"{% endif %}>Pessoas</a>
+  <a href="/cadastros/classificacoes" {% if request.path == '/cadastros/classificacoes' %}aria-current="page"{% endif %}>Classificações</a>
+  <a href="/cadastros/contas" {% if request.path == '/cadastros/contas' %}aria-current="page"{% endif %}>Contas</a>
+  {% if login_ativo %}<form method="post" action="/sair"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button type="submit">Sair</button></form>{% endif %}
+</nav>
+
+  <section class="card">
+    <h2>{{ titulo }}</h2>
+    <form id="buscarForm" class="search">
+      <div><label for="busca">Buscar por um ou mais termos</label><input id="busca" maxlength="200" placeholder="Nome, documento, descrição ou tipo"></div>
+      <div><label for="situacao">Situação</label><select id="situacao"><option value="ATIVO">Ativos</option><option value="INATIVO">Inativos</option><option value="TODOS">Ativos e inativos</option></select></div>
+      <button class="primary" type="submit">Buscar</button>
+      <button type="button" id="todosBtn">Todos os ativos</button>
+    </form>
+    <p class="hint">A lista começa vazia. Use Buscar ou Todos os ativos. Clique no título de uma coluna para ordenar.</p>
+    <div id="cadastroStatus" class="status" role="status" aria-live="polite"></div>
+  </section>
+  <section class="card">
+    <div class="table-wrap"><table id="tabela"><thead id="cabecalho"></thead><tbody id="registros"></tbody></table></div>
+    <div class="pagination"><span id="contador" class="hint">Nenhum registro carregado.</span><div><button id="anteriorBtn" disabled>Anterior</button> <button id="proximaBtn" disabled>Próxima</button></div></div>
+    <div class="actions"><button id="novoBtn" class="primary">+ Novo registro</button></div>
+  </section>
+  {% if recurso == 'contas' %}
+    <!-- Mesmo editor para notas extraídas, criação manual e edição de contas. -->
+<section class="card editor hidden" id="notaEditor" aria-labelledby="editorTitulo">
+  <h2 id="editorTitulo">Revisar dados da nota</h2>
+  <p class="hint">Confira os dados antes de lançar. Se o PDF não informar um campo, preencha-o aqui.</p>
+  <form id="notaForm">
+    <div class="grid">
+      <div><label for="notaTipo">Tipo da conta</label><select id="notaTipo"><option value="APAGAR">A pagar (despesa)</option><option value="ARECEBER">A receber (receita)</option></select></div>
+      <div><label for="notaNumero">Número da nota / documento</label><input id="notaNumero" maxlength="60" required></div>
+      <div><label for="notaEmissao">Data de emissão</label><input type="date" id="notaEmissao" required></div>
+      <div><label for="notaTotal">Valor total (R$)</label><input type="number" id="notaTotal" min="0.01" step="0.01" required></div>
+      <div class="full"><label for="notaDescricao">Descrição dos produtos / serviços</label><textarea id="notaDescricao" maxlength="10000"></textarea></div>
+    </div>
+    <h3 id="pessoaTitulo">Fornecedor</h3>
+    <div class="grid">
+      <div><label for="notaRazao">Nome / razão social</label><input id="notaRazao" maxlength="200" required></div>
+      <div><label for="notaFantasia">Nome fantasia</label><input id="notaFantasia" maxlength="200"></div>
+      <div class="full"><label for="notaCnpj">CPF/CNPJ do fornecedor ou cliente</label><input id="notaCnpj" maxlength="18" required></div>
+    </div>
+    <h3>Faturado</h3>
+    <div class="grid">
+      <div><label for="notaNome">Nome completo</label><input id="notaNome" maxlength="200" required></div>
+      <div><label for="notaCpf">CPF</label><input id="notaCpf" maxlength="14" required></div>
+    </div>
+    <h3>Classificações</h3>
+    <label for="notaCategorias">Uma classificação por linha</label>
+    <textarea id="notaCategorias" required placeholder="MANUTENÇÃO E OPERAÇÃO"></textarea>
+    <h3>Parcelas</h3>
+    <div id="notaParcelas"></div>
+    <button type="button" id="adicionarParcela">+ Adicionar parcela</button>
+    <div class="actions">
+      <button class="primary" type="submit" id="analisarBtn">Consultar no banco</button>
+      <button type="button" id="cancelarNota">Cancelar</button>
+    </div>
+  </form>
+  <div id="consultaResultado" class="check-rows hidden" aria-live="polite"></div>
+  <div class="actions hidden" id="lancarActions"><button class="primary" type="button" id="lancarBtn">Confirmar e lançar conta</button></div>
+  <div id="notaStatus" class="status" role="status" aria-live="polite"></div>
+</section>
+
+  {% else %}
+    <section class="card editor hidden" id="cadastroEditor"><h2 id="cadastroTitulo">Novo registro</h2>
+      <form id="cadastroForm"><div class="grid">
+        <div><label for="tipo">Tipo</label><select id="tipo">
+          {% if recurso == 'pessoas' %}<option value="CLIENTE-FORNECEDOR">Cliente / fornecedor</option><option value="FATURADO">Faturado</option>
+          {% else %}<option value="DESPESA">Despesa</option><option value="RECEITA">Receita</option>{% endif %}
+        </select></div>
+        {% if recurso == 'pessoas' %}
+        <div><label for="razao">Nome / razão social</label><input id="razao" required maxlength="200"></div>
+        <div><label for="fantasia">Nome fantasia</label><input id="fantasia" maxlength="200"></div>
+        <div><label for="documento">CPF/CNPJ</label><input id="documento" required maxlength="18"></div>
+        {% else %}
+        <div><label for="descricao">Descrição</label><input id="descricao" required maxlength="120"></div>
+        {% endif %}
+      </div><p class="hint">Novos cadastros ficam ativos automaticamente.</p><div class="actions"><button class="primary" id="salvarCadastro">Salvar</button><button type="button" id="cancelarCadastro">Cancelar</button></div></form>
+    </section>
+  {% endif %}
+</main>
+{% if recurso == 'contas' %}<script>
+// Revisão, consulta e lançamento; preserva o formato JSON da primeira etapa.
+const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+async function api(url, options = {}) {
+  const headers = {...options.headers, 'X-CSRF-Token': csrfToken};
+  if (options.body && !(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
+  const resposta = await fetch(url, {...options, headers});
+  const dados = await resposta.json();
+  if (!resposta.ok) throw new Error(dados.error || 'Não foi possível concluir a operação.');
+  return dados;
+}
+const $ = id => document.getElementById(id);
+const notaEditor = $('notaEditor');
+let arquivoNota = null;
+let contaEditando = null;
+let origemNota = 'manual';
+let notaConsultada = null;
+function notaStatus(mensagem, tipo = '') {
+  $('notaStatus').textContent = mensagem;
+  $('notaStatus').className = 'status ' + tipo;
+}
+function invalidarConsulta() {
+  notaConsultada = null;
+  $('consultaResultado').classList.add('hidden');
+  $('lancarActions').classList.add('hidden');
+}
+function isoData(valor) {
+  if (!valor) return '';
+  const partes = String(valor).split('/');
+  return partes.length === 3 ? `${partes[2]}-${partes[1]}-${partes[0]}` : String(valor).slice(0,10);
+}
+function adicionarParcela(parcela = {}) {
+  const linha = document.createElement('div');
+  linha.className = 'parcelas';
+  const numero = document.createElement('span'); numero.className = 'numero';
+  const vencimento = document.createElement('input'); vencimento.type = 'date'; vencimento.required = true;
+  vencimento.value = isoData(parcela.dataVencimento);
+  const valor = document.createElement('input'); valor.type = 'number'; valor.min = '0.01'; valor.step = '0.01'; valor.required = true;
+  valor.value = parcela.valor ?? '';
+  const remover = document.createElement('button'); remover.type = 'button'; remover.textContent = 'Remover';
+  remover.addEventListener('click', () => {linha.remove(); renumerarParcelas(); invalidarConsulta();});
+  linha.append(numero, vencimento, valor, remover);
+  $('notaParcelas').append(linha);
+  renumerarParcelas();
+}
+function renumerarParcelas() {
+  [...$('notaParcelas').children].forEach((linha, i) => {
+    linha.querySelector('.numero').textContent = i+1;
+    linha.querySelector('input[type=date]').setAttribute('aria-label', `Vencimento da parcela ${i+1}`);
+    linha.querySelector('input[type=number]').setAttribute('aria-label', `Valor da parcela ${i+1} em reais`);
+  });
+}
+function abrirNota(dados = {}, arquivo = null, id = null) {
+  arquivoNota = arquivo; contaEditando = id; origemNota = arquivo ? 'extracao' : 'manual';
+  invalidarConsulta(); notaStatus('');
+  $('editorTitulo').textContent = id ? `Editar conta #${id}` : 'Revisar dados da nota';
+  $('lancarBtn').textContent = id ? 'Salvar alterações da conta' : 'Confirmar e lançar conta';
+  $('notaTipo').value = dados.tipo || 'APAGAR';
+  $('notaNumero').value = dados.numeroNotaFiscal || dados.numero_nota_fiscal || '';
+  $('notaEmissao').value = isoData(dados.dataEmissao || dados.data_emissao);
+  $('notaTotal').value = dados.valorTotal ?? dados.valor_total ?? '';
+  $('notaDescricao').value = dados.descricaoProdutos || dados.descricao_produtos || '';
+  $('notaRazao').value = dados.fornecedor?.razaoSocial || '';
+  $('notaFantasia').value = dados.fornecedor?.fantasia || '';
+  $('notaCnpj').value = dados.fornecedor?.cnpj || '';
+  $('notaNome').value = dados.faturado?.nomeCompleto || '';
+  $('notaCpf').value = dados.faturado?.cpf || '';
+  $('notaCategorias').value = (dados.classificacoes || [dados.classificacaoDespesa || '']).join('\n');
+  $('notaParcelas').replaceChildren();
+  const parcelas = dados.parcelas?.length ? dados.parcelas : [{valor: dados.valorTotal ?? ''}];
+  parcelas.forEach(adicionarParcela);
+  atualizarTipo();
+  notaEditor.classList.remove('hidden');
+  notaEditor.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function obterNota() {
+  return {
+    tipo: $('notaTipo').value, numeroNotaFiscal: $('notaNumero').value, dataEmissao: $('notaEmissao').value,
+    valorTotal: $('notaTotal').value, descricaoProdutos: $('notaDescricao').value,
+    fornecedor: {razaoSocial: $('notaRazao').value, fantasia: $('notaFantasia').value, cnpj: $('notaCnpj').value},
+    faturado: {nomeCompleto: $('notaNome').value, cpf: $('notaCpf').value},
+    classificacoes: $('notaCategorias').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    parcelas: [...$('notaParcelas').children].map((linha, i)=>({numero:i+1,
+      dataVencimento:linha.querySelector('input[type=date]').value, valor:linha.querySelector('input[type=number]').value})),
+  };
+}
+function atualizarTipo() { $('pessoaTitulo').textContent = $('notaTipo').value === 'APAGAR' ? 'Fornecedor' : 'Cliente'; }
+$('notaTipo').addEventListener('change', atualizarTipo);
+$('notaForm').addEventListener('input', invalidarConsulta);
+$('notaForm').addEventListener('change', invalidarConsulta);
+$('adicionarParcela').addEventListener('click', ()=>{adicionarParcela();invalidarConsulta();});
+$('cancelarNota').addEventListener('click', ()=>{notaEditor.classList.add('hidden');invalidarConsulta();});
+function mostrarConsulta(titulo, registro) {
+  const bloco = document.createElement('div'); bloco.className = 'consulta' + (registro.existe && registro.status === 'ATIVO' ? '' : ' pendente');
+  const cabecalho = document.createElement('strong'); cabecalho.textContent = titulo;
+  const nome = document.createElement('span'); nome.textContent = registro.nome;
+  const doc = document.createElement('span'); doc.textContent = registro.documento || '';
+  const situacao = document.createElement('strong'); situacao.textContent = registro.mensagem;
+  bloco.append(cabecalho,nome,doc,situacao);
+  if(registro.nomeCadastrado && registro.nomeCadastrado !== registro.nome) {
+    const aviso = document.createElement('span'); aviso.textContent = `Nome no cadastro: ${registro.nomeCadastrado}. O cadastro existente será utilizado.`; bloco.append(aviso);
+  }
+  $('consultaResultado').append(bloco);
+}
+$('notaForm').addEventListener('submit', async evento=>{
+  evento.preventDefault(); invalidarConsulta(); const nota = obterNota();
+  $('analisarBtn').disabled = true; notaStatus('Consultando o PostgreSQL...');
+  try {
+    const resultado = await api('/api/analisar', {method:'POST',body:JSON.stringify(nota)});
+    const duplicadaPropria = contaEditando && resultado.duplicada?.id === contaEditando;
+    const inativo = [resultado.fornecedor,resultado.faturado,...resultado.classificacoes].some(r=>r.status==='INATIVO');
+    $('consultaResultado').replaceChildren();
+    mostrarConsulta(nota.tipo==='APAGAR'?'FORNECEDOR':'CLIENTE', resultado.fornecedor);
+    mostrarConsulta('FATURADO', resultado.faturado);
+    resultado.classificacoes.forEach(r=>mostrarConsulta(nota.tipo==='APAGAR'?'DESPESA':'RECEITA',r));
+    $('consultaResultado').classList.remove('hidden');
+    // Uma resposta de uma consulta antiga não autoriza salvar dados já alterados.
+    if (JSON.stringify(nota) !== JSON.stringify(obterNota())) {invalidarConsulta();notaStatus('Dados alterados. Consulte novamente.');return;}
+    if (resultado.podeLancar || (duplicadaPropria && !inativo)) {
+      notaConsultada = JSON.stringify(nota); $('lancarActions').classList.remove('hidden');
+      notaStatus(duplicadaPropria?'Dados conferidos. Confirme as alterações.':resultado.orientacao);
+    } else notaStatus(resultado.orientacao,'err');
+  } catch(erro) {notaStatus(erro.message,'err');}
+  finally {$('analisarBtn').disabled=false;}
+});
+$('lancarBtn').addEventListener('click', async()=>{
+  const nota = obterNota();
+  if(notaConsultada !== JSON.stringify(nota)) {invalidarConsulta();notaStatus('Consulte novamente antes de confirmar.','err');return;}
+  $('lancarBtn').disabled=true; $('analisarBtn').disabled=true; notaStatus('Gravando conta e parcelas...');
+  try {
+    let resultado;
+    if(contaEditando) resultado=await api(`/api/cadastros/contas/${contaEditando}`,{method:'PUT',body:JSON.stringify(nota)});
+    else {
+      const form = new FormData(); form.append('dados', JSON.stringify(nota)); form.append('origem', origemNota);
+      if(arquivoNota) form.append('pdf', arquivoNota);
+      resultado=await api('/api/lancar',{method:'POST',body:form});
+    }
+    invalidarConsulta(); notaStatus(`${resultado.mensagem} Conta #${resultado.id}.`,'ok');
+    window.dispatchEvent(new CustomEvent('contaSalva',{detail:resultado}));
+  } catch(erro){notaStatus(erro.message,'err');}
+  finally{$('lancarBtn').disabled=false;$('analisarBtn').disabled=false;}
+});
+
+</script>{% endif %}
+<script>window.recursoCadastro = {{ recurso | tojson }};</script>
+<script>
+// Tabelas iniciam vazias; busca, ordenação e paginação são feitas no PostgreSQL.
+const recursoCadastro = window.recursoCadastro;
+const el = id=>document.getElementById(id);
+const configs = {
+  pessoas: [['id','ID'],['tipo','Tipo'],['razao_social','Nome / razão social'],['fantasia','Fantasia'],['documento','CPF/CNPJ'],['status','Situação']],
+  classificacoes: [['id','ID'],['tipo','Tipo'],['descricao','Descrição'],['status','Situação']],
+  contas: [['id','ID'],['tipo','Tipo'],['numero_nota_fiscal','Nota'],['data_emissao','Emissão'],['pessoa','Fornecedor / cliente'],['faturado','Faturado'],['valor_total','Valor (R$)'],['status','Situação']],
+};
+let ordemTabela = recursoCadastro==='pessoas'?'razao_social':recursoCadastro==='contas'?'data_emissao':'descricao';
+let direcaoTabela = 'asc', paginaTabela=1, buscaRealizada=false, registroEditando=null;
+let buscaAtual='', statusAtual='ATIVO';
+const colunasTabela=configs[recursoCadastro];
+async function apiCadastro(url, options={}) {
+  const headers={...options.headers,'X-CSRF-Token':document.querySelector('meta[name="csrf-token"]').content};
+  if(options.body) headers['Content-Type']='application/json';
+  const res=await fetch(url,{...options,headers}); const dados=await res.json();
+  if(!res.ok) throw new Error(dados.error||'Falha na operação.'); return dados;
+}
+function mensagemCadastro(texto,tipo=''){el('cadastroStatus').textContent=texto;el('cadastroStatus').className='status '+tipo;}
+function vazio(texto){const tr=document.createElement('tr');const td=document.createElement('td');td.colSpan=colunasTabela.length+1;td.textContent=texto;tr.append(td);el('registros').replaceChildren(tr);}
+function cabecalhoTabela(){
+  const tr=document.createElement('tr');
+  colunasTabela.forEach(([campo,nome])=>{
+    const th=document.createElement('th');th.scope='col';
+    {const b=document.createElement('button');b.type='button';b.textContent=nome+(ordemTabela===campo?(direcaoTabela==='asc'?' ↑':' ↓'):'');
+      th.setAttribute('aria-sort',ordemTabela===campo?(direcaoTabela==='asc'?'ascending':'descending'):'none');
+      b.addEventListener('click',()=>{direcaoTabela=ordemTabela===campo&&direcaoTabela==='asc'?'desc':'asc';ordemTabela=campo;paginaTabela=1;cabecalhoTabela();if(buscaRealizada)carregarTabela();});th.append(b);}
+    tr.append(th);
+  });const a=document.createElement('th');a.scope='col';a.textContent='Ações';tr.append(a);el('cabecalho').replaceChildren(tr);
+}
+function formatarTabela(campo,valor){
+  if(campo==='valor_total') return Number(valor).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(campo==='data_emissao') return String(valor).split('-').reverse().join('/');
+  if(campo==='tipo') return {'APAGAR':'A pagar','ARECEBER':'A receber','CLIENTE-FORNECEDOR':'Cliente / fornecedor','FATURADO':'Faturado','DESPESA':'Despesa','RECEITA':'Receita'}[valor]||valor;
+  return valor??'';
+}
+async function carregarTabela(){
+  mensagemCadastro('Carregando...');
+  const q=new URLSearchParams({todos:'1',busca:buscaAtual,status:statusAtual,ordem:ordemTabela,direcao:direcaoTabela,pagina:paginaTabela});
+  try {
+    const dados=await apiCadastro(`/api/cadastros/${recursoCadastro}?${q}`);
+    if(!dados.registros.length && paginaTabela>1){paginaTabela--;return carregarTabela();}
+    el('registros').replaceChildren();
+    if(!dados.registros.length) vazio('Nenhum registro encontrado.');
+    dados.registros.forEach(r=>{
+      const tr=document.createElement('tr');colunasTabela.forEach(([campo])=>{const td=document.createElement('td');td.textContent=formatarTabela(campo,r[campo]);tr.append(td);});
+      const td=document.createElement('td');
+      const editar=document.createElement('button');editar.textContent='Editar';editar.addEventListener('click',()=>abrirCadastro(r.id));td.append(editar);
+      const status=document.createElement('button');status.textContent=r.status==='ATIVO'?'Inativar':'Reativar';status.className=r.status==='ATIVO'?'danger':'';
+      status.addEventListener('click',()=>mudarStatus(r));td.append(status);
+      if(recursoCadastro==='contas'){const doc=document.createElement('button');doc.textContent='PDF';doc.addEventListener('click',()=>abrirDocumento(r.id));td.append(doc);}
+      tr.append(td);el('registros').append(tr);
+    });
+    el('contador').textContent=`${dados.total} registro(s) · Página ${paginaTabela}`;
+    el('anteriorBtn').disabled=paginaTabela===1;el('proximaBtn').disabled=paginaTabela*dados.limite>=dados.total;
+    mensagemCadastro('');
+  }catch(erro){mensagemCadastro(erro.message,'err');}
+}
+async function abrirDocumento(id){
+  try {const conta=await apiCadastro(`/api/cadastros/contas/${id}`);if(!conta.documentoId){mensagemCadastro('Esta conta foi criada manualmente e não possui PDF.');return;}
+    window.location.assign(`/api/contas/${id}/documento`);
+  }catch(erro){mensagemCadastro(erro.message,'err');}
+}
+async function abrirCadastro(id=null){
+  try {
+    const r=id?await apiCadastro(`/api/cadastros/${recursoCadastro}/${id}`):{};
+    if(recursoCadastro==='contas'){if(r.status==='INATIVO'){mensagemCadastro('Reative a conta antes de editar.','err');return;}abrirNota(r,null,id);return;}
+    registroEditando=id;el('cadastroTitulo').textContent=id?`Editar registro #${id}`:'Novo registro';
+    el('tipo').value=r.tipo||(recursoCadastro==='pessoas'?'CLIENTE-FORNECEDOR':'DESPESA');
+    if(recursoCadastro==='pessoas'){el('razao').value=r.razao_social||'';el('fantasia').value=r.fantasia||'';el('documento').value=r.documento||'';}
+    else el('descricao').value=r.descricao||'';
+    el('cadastroEditor').classList.remove('hidden');el('cadastroEditor').scrollIntoView({behavior:'smooth'});
+  }catch(erro){mensagemCadastro(erro.message,'err');}
+}
+async function mudarStatus(registro){
+  const inativar=registro.status==='ATIVO';
+  if(!confirm(inativar?`Inativar o registro #${registro.id}? O histórico será preservado.`:`Reativar o registro #${registro.id}?`))return;
+  try{await apiCadastro(`/api/cadastros/${recursoCadastro}/${registro.id}${inativar?'':'/reativar'}`,{method:inativar?'DELETE':'POST'});await carregarTabela();}
+  catch(erro){mensagemCadastro(erro.message,'err');}
+}
+el('buscarForm').addEventListener('submit',e=>{e.preventDefault();buscaRealizada=true;buscaAtual=el('busca').value;statusAtual=el('situacao').value;paginaTabela=1;carregarTabela();});
+el('todosBtn').addEventListener('click',()=>{el('busca').value='';el('situacao').value='ATIVO';buscaAtual='';statusAtual='ATIVO';paginaTabela=1;buscaRealizada=true;carregarTabela();});
+el('anteriorBtn').addEventListener('click',()=>{paginaTabela--;carregarTabela();});el('proximaBtn').addEventListener('click',()=>{paginaTabela++;carregarTabela();});
+el('novoBtn').addEventListener('click',()=>abrirCadastro());
+if(recursoCadastro!=='contas'){
+  el('cancelarCadastro').addEventListener('click',()=>el('cadastroEditor').classList.add('hidden'));
+  el('cadastroForm').addEventListener('submit',async e=>{
+    e.preventDefault();el('salvarCadastro').disabled=true;
+    const dados={tipo:el('tipo').value};
+    if(recursoCadastro==='pessoas')Object.assign(dados,{razao_social:el('razao').value,fantasia:el('fantasia').value,documento:el('documento').value});
+    else dados.descricao=el('descricao').value;
+    try{await apiCadastro(`/api/cadastros/${recursoCadastro}${registroEditando?'/'+registroEditando:''}`,{method:registroEditando?'PUT':'POST',body:JSON.stringify(dados)});
+      el('cadastroEditor').classList.add('hidden');if(buscaRealizada)await carregarTabela();mensagemCadastro('Registro salvo com sucesso.','ok');}
+    catch(erro){mensagemCadastro(erro.message,'err');el('cadastroStatus').scrollIntoView({behavior:'smooth'});}
+    finally{el('salvarCadastro').disabled=false;}
+  });
+}
+window.addEventListener('contaSalva',()=>{if(buscaRealizada)carregarTabela();});
+cabecalhoTabela();vazio('Use Buscar ou Todos os ativos para carregar os registros.');
+
+</script>
+</body></html>
+
+{% else %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="csrf-token" content="{{ csrf_token }}" />
-<link rel="stylesheet" href="/static/comum.css" />
+<style>
+:root{--bg:#f7f3e8;--surface:#fffdf6;--ink:#2a2519;--muted:#7a6f5c;--border:#e6dcc2;--forest:#2f5d45;--forest-dark:#1f4433;--forest-tint:#e7f0e9;--wheat:#c9932f;--wheat-tint:#f7ecd3;--err:#a8422f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;padding:0 16px 48px}.wrap{max-width:1100px;margin:auto}.marca{background:var(--forest-dark);padding:24px;color:#fffdf6;border-radius:0 0 16px 16px;margin-bottom:22px}.marca h1{font-family:Fraunces,Georgia,serif;margin:0;font-size:28px}.marca p{color:#d9e6dd;margin:6px 0 0}.nav{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.nav a{padding:9px 13px;border:1px solid var(--border);border-radius:7px;text-decoration:none;color:var(--forest-dark);background:var(--surface);font-weight:600}.nav a[aria-current=page]{background:var(--forest);color:white}.nav form{margin-left:auto}.card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--forest);border-radius:10px;padding:20px;margin-bottom:16px}h2{font-family:Fraunces,Georgia,serif;font-size:21px;margin:0 0 16px}h3{font-size:15px;margin:18px 0 10px}label{display:block;font-weight:600;font-size:13px;margin:0 0 6px}input,select,textarea{font:inherit;width:100%;padding:10px;border:1px solid var(--border);border-radius:7px;background:#fffef9;color:var(--ink)}input:focus,select:focus,textarea:focus{outline:2px solid var(--forest);outline-offset:1px}textarea{resize:vertical;min-height:70px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}button,.button{font:inherit;border:1px solid var(--border);border-radius:7px;padding:10px 16px;cursor:pointer;color:var(--forest-dark);background:var(--forest-tint);font-weight:600;text-decoration:none}button.primary,.button.primary{color:white;background:var(--forest);border-color:var(--forest)}button.danger{background:#faeee9;color:var(--err)}button:disabled{opacity:.5;cursor:not-allowed}button:hover:not(:disabled){filter:brightness(.96)}.muted,.hint{color:var(--muted);font-size:12px;line-height:1.6}.status{margin-top:12px;line-height:1.6}.status.err{color:var(--err)}.status.ok{color:var(--forest)}.hidden{display:none!important}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid var(--border);padding:12px 10px;text-align:left;vertical-align:middle}th button{padding:0;border:0;background:none;text-align:left}td button{padding:6px 10px;font-size:12px;margin:2px}.badge{display:inline-block;padding:4px 9px;background:var(--wheat-tint);border-radius:12px;font-size:11px;font-weight:700}.consulta{padding:12px;background:var(--forest-tint);border:1px solid var(--border);border-radius:7px;margin-top:8px}.consulta.pendente{background:var(--wheat-tint)}.consulta strong,.consulta span{display:block;margin:3px 0}.parcelas{display:grid;grid-template-columns:50px 1fr 1fr auto;gap:8px;align-items:end;margin:10px 0}.parcelas .numero{align-self:center}.search{display:grid;grid-template-columns:2fr 1fr auto auto;gap:10px;align-items:end}.search-actions{display:flex;gap:8px}.pagination{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px}.editor{scroll-margin-top:20px}.notice{padding:12px;border-left:3px solid var(--wheat);background:var(--wheat-tint);line-height:1.6}.check-rows{margin-top:14px}.inline{display:inline-block}a{color:var(--forest-dark)}@media(max-width:650px){.grid,.search{grid-template-columns:1fr}.full{grid-column:auto}.parcelas{grid-template-columns:30px 1fr}.parcelas button{grid-column:2}.nav form{margin-left:0}.pagination{flex-wrap:wrap}.card{padding:15px}}
+
+</style>
 <title>RuralFin - Extração de Dados de Nota Fiscal</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌾</text></svg>" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -224,7 +578,14 @@
     </div>
   </div>
 
-  {% include 'nav.html' %}
+  <nav class="nav" aria-label="Navegação principal">
+  <a href="/" {% if request.path == '/' %}aria-current="page"{% endif %}>Importar nota</a>
+  <a href="/cadastros/pessoas" {% if request.path == '/cadastros/pessoas' %}aria-current="page"{% endif %}>Pessoas</a>
+  <a href="/cadastros/classificacoes" {% if request.path == '/cadastros/classificacoes' %}aria-current="page"{% endif %}>Classificações</a>
+  <a href="/cadastros/contas" {% if request.path == '/cadastros/contas' %}aria-current="page"{% endif %}>Contas</a>
+  {% if login_ativo %}<form method="post" action="/sair"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button type="submit">Sair</button></form>{% endif %}
+</nav>
+
   <!-- Chave de API -->
   <div class="card">
     <label for="apiKey">Chave de API do Gemini</label>
@@ -275,10 +636,191 @@
     </div>
   </div>
 
-  {% include 'revisao.html' %}
+  <!-- Mesmo editor para notas extraídas, criação manual e edição de contas. -->
+<section class="card editor hidden" id="notaEditor" aria-labelledby="editorTitulo">
+  <h2 id="editorTitulo">Revisar dados da nota</h2>
+  <p class="hint">Confira os dados antes de lançar. Se o PDF não informar um campo, preencha-o aqui.</p>
+  <form id="notaForm">
+    <div class="grid">
+      <div><label for="notaTipo">Tipo da conta</label><select id="notaTipo"><option value="APAGAR">A pagar (despesa)</option><option value="ARECEBER">A receber (receita)</option></select></div>
+      <div><label for="notaNumero">Número da nota / documento</label><input id="notaNumero" maxlength="60" required></div>
+      <div><label for="notaEmissao">Data de emissão</label><input type="date" id="notaEmissao" required></div>
+      <div><label for="notaTotal">Valor total (R$)</label><input type="number" id="notaTotal" min="0.01" step="0.01" required></div>
+      <div class="full"><label for="notaDescricao">Descrição dos produtos / serviços</label><textarea id="notaDescricao" maxlength="10000"></textarea></div>
+    </div>
+    <h3 id="pessoaTitulo">Fornecedor</h3>
+    <div class="grid">
+      <div><label for="notaRazao">Nome / razão social</label><input id="notaRazao" maxlength="200" required></div>
+      <div><label for="notaFantasia">Nome fantasia</label><input id="notaFantasia" maxlength="200"></div>
+      <div class="full"><label for="notaCnpj">CPF/CNPJ do fornecedor ou cliente</label><input id="notaCnpj" maxlength="18" required></div>
+    </div>
+    <h3>Faturado</h3>
+    <div class="grid">
+      <div><label for="notaNome">Nome completo</label><input id="notaNome" maxlength="200" required></div>
+      <div><label for="notaCpf">CPF</label><input id="notaCpf" maxlength="14" required></div>
+    </div>
+    <h3>Classificações</h3>
+    <label for="notaCategorias">Uma classificação por linha</label>
+    <textarea id="notaCategorias" required placeholder="MANUTENÇÃO E OPERAÇÃO"></textarea>
+    <h3>Parcelas</h3>
+    <div id="notaParcelas"></div>
+    <button type="button" id="adicionarParcela">+ Adicionar parcela</button>
+    <div class="actions">
+      <button class="primary" type="submit" id="analisarBtn">Consultar no banco</button>
+      <button type="button" id="cancelarNota">Cancelar</button>
+    </div>
+  </form>
+  <div id="consultaResultado" class="check-rows hidden" aria-live="polite"></div>
+  <div class="actions hidden" id="lancarActions"><button class="primary" type="button" id="lancarBtn">Confirmar e lançar conta</button></div>
+  <div id="notaStatus" class="status" role="status" aria-live="polite"></div>
+</section>
+
 </div>
 
-<script src="/static/revisao.js"></script>
+<script>
+// Revisão, consulta e lançamento; preserva o formato JSON da primeira etapa.
+const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+async function api(url, options = {}) {
+  const headers = {...options.headers, 'X-CSRF-Token': csrfToken};
+  if (options.body && !(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
+  const resposta = await fetch(url, {...options, headers});
+  const dados = await resposta.json();
+  if (!resposta.ok) throw new Error(dados.error || 'Não foi possível concluir a operação.');
+  return dados;
+}
+const $ = id => document.getElementById(id);
+const notaEditor = $('notaEditor');
+let arquivoNota = null;
+let contaEditando = null;
+let origemNota = 'manual';
+let notaConsultada = null;
+function notaStatus(mensagem, tipo = '') {
+  $('notaStatus').textContent = mensagem;
+  $('notaStatus').className = 'status ' + tipo;
+}
+function invalidarConsulta() {
+  notaConsultada = null;
+  $('consultaResultado').classList.add('hidden');
+  $('lancarActions').classList.add('hidden');
+}
+function isoData(valor) {
+  if (!valor) return '';
+  const partes = String(valor).split('/');
+  return partes.length === 3 ? `${partes[2]}-${partes[1]}-${partes[0]}` : String(valor).slice(0,10);
+}
+function adicionarParcela(parcela = {}) {
+  const linha = document.createElement('div');
+  linha.className = 'parcelas';
+  const numero = document.createElement('span'); numero.className = 'numero';
+  const vencimento = document.createElement('input'); vencimento.type = 'date'; vencimento.required = true;
+  vencimento.value = isoData(parcela.dataVencimento);
+  const valor = document.createElement('input'); valor.type = 'number'; valor.min = '0.01'; valor.step = '0.01'; valor.required = true;
+  valor.value = parcela.valor ?? '';
+  const remover = document.createElement('button'); remover.type = 'button'; remover.textContent = 'Remover';
+  remover.addEventListener('click', () => {linha.remove(); renumerarParcelas(); invalidarConsulta();});
+  linha.append(numero, vencimento, valor, remover);
+  $('notaParcelas').append(linha);
+  renumerarParcelas();
+}
+function renumerarParcelas() {
+  [...$('notaParcelas').children].forEach((linha, i) => {
+    linha.querySelector('.numero').textContent = i+1;
+    linha.querySelector('input[type=date]').setAttribute('aria-label', `Vencimento da parcela ${i+1}`);
+    linha.querySelector('input[type=number]').setAttribute('aria-label', `Valor da parcela ${i+1} em reais`);
+  });
+}
+function abrirNota(dados = {}, arquivo = null, id = null) {
+  arquivoNota = arquivo; contaEditando = id; origemNota = arquivo ? 'extracao' : 'manual';
+  invalidarConsulta(); notaStatus('');
+  $('editorTitulo').textContent = id ? `Editar conta #${id}` : 'Revisar dados da nota';
+  $('lancarBtn').textContent = id ? 'Salvar alterações da conta' : 'Confirmar e lançar conta';
+  $('notaTipo').value = dados.tipo || 'APAGAR';
+  $('notaNumero').value = dados.numeroNotaFiscal || dados.numero_nota_fiscal || '';
+  $('notaEmissao').value = isoData(dados.dataEmissao || dados.data_emissao);
+  $('notaTotal').value = dados.valorTotal ?? dados.valor_total ?? '';
+  $('notaDescricao').value = dados.descricaoProdutos || dados.descricao_produtos || '';
+  $('notaRazao').value = dados.fornecedor?.razaoSocial || '';
+  $('notaFantasia').value = dados.fornecedor?.fantasia || '';
+  $('notaCnpj').value = dados.fornecedor?.cnpj || '';
+  $('notaNome').value = dados.faturado?.nomeCompleto || '';
+  $('notaCpf').value = dados.faturado?.cpf || '';
+  $('notaCategorias').value = (dados.classificacoes || [dados.classificacaoDespesa || '']).join('\n');
+  $('notaParcelas').replaceChildren();
+  const parcelas = dados.parcelas?.length ? dados.parcelas : [{valor: dados.valorTotal ?? ''}];
+  parcelas.forEach(adicionarParcela);
+  atualizarTipo();
+  notaEditor.classList.remove('hidden');
+  notaEditor.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function obterNota() {
+  return {
+    tipo: $('notaTipo').value, numeroNotaFiscal: $('notaNumero').value, dataEmissao: $('notaEmissao').value,
+    valorTotal: $('notaTotal').value, descricaoProdutos: $('notaDescricao').value,
+    fornecedor: {razaoSocial: $('notaRazao').value, fantasia: $('notaFantasia').value, cnpj: $('notaCnpj').value},
+    faturado: {nomeCompleto: $('notaNome').value, cpf: $('notaCpf').value},
+    classificacoes: $('notaCategorias').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    parcelas: [...$('notaParcelas').children].map((linha, i)=>({numero:i+1,
+      dataVencimento:linha.querySelector('input[type=date]').value, valor:linha.querySelector('input[type=number]').value})),
+  };
+}
+function atualizarTipo() { $('pessoaTitulo').textContent = $('notaTipo').value === 'APAGAR' ? 'Fornecedor' : 'Cliente'; }
+$('notaTipo').addEventListener('change', atualizarTipo);
+$('notaForm').addEventListener('input', invalidarConsulta);
+$('notaForm').addEventListener('change', invalidarConsulta);
+$('adicionarParcela').addEventListener('click', ()=>{adicionarParcela();invalidarConsulta();});
+$('cancelarNota').addEventListener('click', ()=>{notaEditor.classList.add('hidden');invalidarConsulta();});
+function mostrarConsulta(titulo, registro) {
+  const bloco = document.createElement('div'); bloco.className = 'consulta' + (registro.existe && registro.status === 'ATIVO' ? '' : ' pendente');
+  const cabecalho = document.createElement('strong'); cabecalho.textContent = titulo;
+  const nome = document.createElement('span'); nome.textContent = registro.nome;
+  const doc = document.createElement('span'); doc.textContent = registro.documento || '';
+  const situacao = document.createElement('strong'); situacao.textContent = registro.mensagem;
+  bloco.append(cabecalho,nome,doc,situacao);
+  if(registro.nomeCadastrado && registro.nomeCadastrado !== registro.nome) {
+    const aviso = document.createElement('span'); aviso.textContent = `Nome no cadastro: ${registro.nomeCadastrado}. O cadastro existente será utilizado.`; bloco.append(aviso);
+  }
+  $('consultaResultado').append(bloco);
+}
+$('notaForm').addEventListener('submit', async evento=>{
+  evento.preventDefault(); invalidarConsulta(); const nota = obterNota();
+  $('analisarBtn').disabled = true; notaStatus('Consultando o PostgreSQL...');
+  try {
+    const resultado = await api('/api/analisar', {method:'POST',body:JSON.stringify(nota)});
+    const duplicadaPropria = contaEditando && resultado.duplicada?.id === contaEditando;
+    const inativo = [resultado.fornecedor,resultado.faturado,...resultado.classificacoes].some(r=>r.status==='INATIVO');
+    $('consultaResultado').replaceChildren();
+    mostrarConsulta(nota.tipo==='APAGAR'?'FORNECEDOR':'CLIENTE', resultado.fornecedor);
+    mostrarConsulta('FATURADO', resultado.faturado);
+    resultado.classificacoes.forEach(r=>mostrarConsulta(nota.tipo==='APAGAR'?'DESPESA':'RECEITA',r));
+    $('consultaResultado').classList.remove('hidden');
+    // Uma resposta de uma consulta antiga não autoriza salvar dados já alterados.
+    if (JSON.stringify(nota) !== JSON.stringify(obterNota())) {invalidarConsulta();notaStatus('Dados alterados. Consulte novamente.');return;}
+    if (resultado.podeLancar || (duplicadaPropria && !inativo)) {
+      notaConsultada = JSON.stringify(nota); $('lancarActions').classList.remove('hidden');
+      notaStatus(duplicadaPropria?'Dados conferidos. Confirme as alterações.':resultado.orientacao);
+    } else notaStatus(resultado.orientacao,'err');
+  } catch(erro) {notaStatus(erro.message,'err');}
+  finally {$('analisarBtn').disabled=false;}
+});
+$('lancarBtn').addEventListener('click', async()=>{
+  const nota = obterNota();
+  if(notaConsultada !== JSON.stringify(nota)) {invalidarConsulta();notaStatus('Consulte novamente antes de confirmar.','err');return;}
+  $('lancarBtn').disabled=true; $('analisarBtn').disabled=true; notaStatus('Gravando conta e parcelas...');
+  try {
+    let resultado;
+    if(contaEditando) resultado=await api(`/api/cadastros/contas/${contaEditando}`,{method:'PUT',body:JSON.stringify(nota)});
+    else {
+      const form = new FormData(); form.append('dados', JSON.stringify(nota)); form.append('origem', origemNota);
+      if(arquivoNota) form.append('pdf', arquivoNota);
+      resultado=await api('/api/lancar',{method:'POST',body:form});
+    }
+    invalidarConsulta(); notaStatus(`${resultado.mensagem} Conta #${resultado.id}.`,'ok');
+    window.dispatchEvent(new CustomEvent('contaSalva',{detail:resultado}));
+  } catch(erro){notaStatus(erro.message,'err');}
+  finally{$('lancarBtn').disabled=false;$('analisarBtn').disabled=false;}
+});
+
+</script>
 <script>
 let selectedFile = null;
 let extractedData = null;
@@ -495,3 +1037,5 @@ document.getElementById("downloadTxt").addEventListener("click", () => {
 </script>
 </body>
 </html>
+
+{% endif %}

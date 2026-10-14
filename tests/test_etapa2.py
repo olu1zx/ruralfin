@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 import psycopg
 import pytest
 
-from db import conectar
+from app import conectar
 
 
 def quantidade(app, tabela):

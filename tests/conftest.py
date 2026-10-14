@@ -10,8 +10,7 @@ from psycopg import sql
 
 RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
-from app import app
-from db import conectar, inicializar
+from app import app, conectar, inicializar
 
 
 @pytest.fixture
@@ -39,4 +38,4 @@ def cliente(ambiente):
 
 @pytest.fixture
 def nota():
-    return json.loads((RAIZ / 'examples' / 'nota-exemplo.json').read_text(encoding='utf-8'))
+    return {'numeroNotaFiscal': 'EXEMPLO-001', 'dataEmissao': '14/10/2026', 'fornecedor': {'razaoSocial': 'IGUAÇU MÁQUINAS LTDA', 'fantasia': 'IGUAÇU', 'cnpj': '11.111.111/0001-00'}, 'faturado': {'nomeCompleto': 'BELTRANO DA SILVA', 'cpf': '999.999.999-99'}, 'descricaoProdutos': 'Óleo diesel para operação de máquinas agrícolas', 'valorTotal': 1250.0, 'classificacaoDespesa': 'MANUTENÇÃO E OPERAÇÃO', 'parcelas': [{'numero': 1, 'dataVencimento': '27/10/2026', 'valor': 1250.0}]}

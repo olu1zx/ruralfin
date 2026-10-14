@@ -6,6 +6,17 @@ Continuação da primeira etapa em **Python/Flask**, **HTML/CSS/JavaScript** e
 **PostgreSQL**. O pgAdmin administra o PostgreSQL; o Flask se conecta diretamente
 ao banco por meio do Psycopg.
 
+## Acessar sem instalar nada
+
+Abra **https://ruralfin-n2.vercel.app** em qualquer computador ou celular com
+internet. Entre com seu usuário e senha. O site funciona na Vercel, e os dados
+ficam no PostgreSQL hospedado no Neon; seu computador pode permanecer desligado.
+Você não precisa de Python, pgAdmin ou destes arquivos para usar o site.
+
+Os arquivos desta pasta servem para estudar, alterar o código ou executar uma
+versão local. O GitHub mantém uma cópia do código. Guarde suas credenciais de
+acesso; para extração de PDFs, informe sua chave do Gemini na interface.
+
 ## O que a segunda etapa faz
 
 1. Recebe o PDF e mantém a extração de dados pelo Gemini da primeira etapa.
@@ -58,7 +69,7 @@ Abra **http://127.0.0.1:5001**. O terminal precisa permanecer aberto enquanto us
 o site. Ctrl+C encerra o site. Para encerrar também o banco:
 
 ```powershell
-.\.venv\Scripts\python.exe banco_local.py parar
+.\.venv\Scripts\python.exe -m flask --app app banco-local parar
 ```
 
 Na tela de importação, informe uma chave do Gemini ou configure `GEMINI_API_KEY`
@@ -72,12 +83,12 @@ Instale Python 3.12+ e PostgreSQL. Na pasta do projeto:
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe banco_local.py configurar
+.\.venv\Scripts\python.exe -m flask --app app banco-local configurar
 .\.venv\Scripts\python.exe -m flask --app app init-db
 powershell -ExecutionPolicy Bypass -File .\iniciar.ps1
 ```
 
-`banco_local.py configurar` usa a instalação padrão do PostgreSQL 16 no Windows
+`flask --app app banco-local configurar` usa a instalação padrão do PostgreSQL 16 no Windows
 e cria uma instância própria para este projeto. Se a instalação for diferente,
 defina `POSTGRES_BIN` com o caminho da pasta `bin`.
 
@@ -89,7 +100,7 @@ e execute `flask init-db`. Não é necessário usar a instância local nesse cas
 
 O servidor **RuralFin local** pode ser cadastrado automaticamente por este
 trabalho. Se ainda não aparecer, feche e abra o pgAdmin novamente. Como alternativa,
-importe `pgadmin-servidor.json` em **Tools > Import/Export Servers** e informe a
+importe `.local-postgres/pgadmin-servidor.json` em **Tools > Import/Export Servers** e informe a
 senha que consta em PGPASSWORD no seu `.env`.
 
 Abra **Servers > RuralFin local > Databases > ruralfin > Schemas > public > Tables**.
@@ -125,20 +136,22 @@ erDiagram
 
 | Arquivo | Responsabilidade |
 |---|---|
-| app.py | Flask, extração Gemini, login e proteção das requisições |
-| financeiro.py | Consultas, cadastros e transação financeira |
-| regras.py | Datas, documentos, valores, categorias e parcelas |
-| db.py | Conexão PostgreSQL e comando init-db |
-| sql/001_schema.sql | Tabelas, chaves, índices e bloqueio de exclusão |
-| templates/ | Páginas HTML e formulários |
-| public/static/ | Visual e comportamento da interface |
-| banco_local.py | Preparação, início, parada e backup do banco local |
-| tests/ | Testes de integração com PostgreSQL |
+| app.py | Backend completo: Gemini, PostgreSQL, validações, login, cadastros e contas |
+| templates/index.html | Todas as telas, estilos e JavaScript em um único HTML |
+| banco.sql | Tabelas, chaves, índices e bloqueio de exclusão física |
+| requirements.txt | Bibliotecas Python utilizadas |
+| iniciar.ps1 | Inicia o sistema local no Windows |
+| README.md | Instruções de uso, execução e entrega |
+| tests/ | Verificação do sistema com PostgreSQL |
+
+Os arquivos de configuração e as pastas de ferramentas locais ficam ocultos
+na visualização padrão do Windows. Continuam disponíveis em **Exibir > Itens
+ocultos**. As senhas, o banco local e os backups foram preservados.
 
 ## Testes
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m pip install "pytest>=8,<10"
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
@@ -152,7 +165,7 @@ o fluxo da interface. Ela pode ser inativada pela tela Contas.
 ## Backup
 
 ```powershell
-.\.venv\Scripts\python.exe banco_local.py backup
+.\.venv\Scripts\python.exe -m flask --app app banco-local backup
 ```
 
 O arquivo é guardado em `tmp/backups` e inclui os PDFs. Para restaurar, crie um
@@ -189,7 +202,7 @@ PDF real depende de uma chave fornecida pelo usuário.
 3. Crie/conecte um PostgreSQL hospedado e configure DATABASE_URL com TLS.
 4. Configure APP_ENV=production, APP_USERNAME, APP_PASSWORD e SECRET_KEY.
    APP_PASSWORD é a senha de entrada do site, diferente da senha do banco.
-5. Execute `sql/001_schema.sql` no banco hospedado ou `flask init-db` com a conexão
+5. Execute `banco.sql` no banco hospedado ou `flask init-db` com a conexão
    desse ambiente. O esquema não deve ser inicializado em toda requisição.
 6. Publique e teste login, extração, consulta, lançamento e leitura da conta.
 
