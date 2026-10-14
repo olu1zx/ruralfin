@@ -182,3 +182,11 @@ def test_extracao_preservada_sem_chamar_google(cliente, nota, monkeypatch):
     resposta=cliente.post('/api/extrair',data={'apiKey':'teste','pdf':(BytesIO(b'%PDF-1.4\n%%EOF'),'nota.pdf')})
     assert resposta.status_code==200
     assert resposta.json==nota
+    assert resposta.headers['Cache-Control']=='no-store'
+
+
+def test_limite_pdf_antes_da_chamada_gemini(cliente, ambiente, monkeypatch):
+    monkeypatch.setitem(ambiente.config,'PDF_MAX_MB',1)
+    resposta=cliente.post('/api/extrair',data={'apiKey':'teste','pdf':(BytesIO(b'%PDF-'+b'0'*(1024*1024)),'grande.pdf')})
+    assert resposta.status_code==413
+    assert '1 MB' in resposta.json['error']

@@ -159,7 +159,7 @@ O projeto está preparado para Flask na Vercel com PostgreSQL hospedado, por exe
 Neon. O PostgreSQL deste computador atende somente ao uso local: o site publicado
 precisa de sua própria conexão de banco na nuvem.
 
-Repositório do projeto: https://github.com/olu1zx/ruralfin-n2
+Repositório do projeto: https://github.com/olu1zx/ruralfin
 
 1. Publique somente os arquivos do projeto no GitHub. `.env`, `.venv`, banco local,
    backups e credenciais já estão ignorados.
