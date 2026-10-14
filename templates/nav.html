@@ -1,0 +1,7 @@
+<nav class="nav" aria-label="Navegação principal">
+  <a href="/" {% if request.path == '/' %}aria-current="page"{% endif %}>Importar nota</a>
+  <a href="/cadastros/pessoas" {% if request.path == '/cadastros/pessoas' %}aria-current="page"{% endif %}>Pessoas</a>
+  <a href="/cadastros/classificacoes" {% if request.path == '/cadastros/classificacoes' %}aria-current="page"{% endif %}>Classificações</a>
+  <a href="/cadastros/contas" {% if request.path == '/cadastros/contas' %}aria-current="page"{% endif %}>Contas</a>
+  {% if login_ativo %}<form method="post" action="/sair"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button type="submit">Sair</button></form>{% endif %}
+</nav>

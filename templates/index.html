@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="csrf-token" content="{{ csrf_token }}" />
+<link rel="stylesheet" href="/static/comum.css" />
+<title>RuralFin - Extração de Dados de Nota Fiscal</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌾</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7f3e8;              /* papel/campo claro */
+    --surface:#fffdf6;
+    --ink:#2a2519;             /* tinta escura quente */
+    --muted:#7a6f5c;
+    --border:#e6dcc2;
+
+    --forest:#2f5d45;          /* verde pasto */
+    --forest-dark:#1f4433;
+    --forest-tint:#e7f0e9;
+
+    --wheat:#c9932f;           /* dourado trigo */
+    --wheat-dark:#9c7222;
+    --wheat-tint:#f7ecd3;
+
+    --soil:#7a5230;            /* marrom terra */
+    --ok:#2f5d45;
+    --err:#a8422f;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Inter',-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    background:
+      radial-gradient(ellipse at top left, rgba(201,147,47,.07), transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    padding:0 16px 48px;
+  }
+  .container{max-width:760px;margin:0 auto;}
+
+  /* Cabeçalho / marca */
+  .header-band{
+    background:linear-gradient(135deg, var(--forest) 0%, var(--forest-dark) 100%);
+    margin:0 -16px 24px;
+    padding:28px 16px 24px;
+    border-radius:0 0 18px 18px;
+  }
+  .header-inner{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px;}
+  .logo-mark{
+    width:46px;height:46px;min-width:46px;
+    border-radius:12px;
+    background:var(--wheat);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:inset 0 0 0 2px rgba(255,255,255,.25);
+  }
+  .logo-mark svg{width:26px;height:26px;}
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:26px;
+    margin:0;
+    color:#fdfaf1;
+    letter-spacing:.01em;
+  }
+  .subtitle{
+    color:#d9e6dd;
+    font-size:13.5px;
+    margin:2px 0 0;
+  }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-top:3px solid var(--forest);
+    border-radius:10px;
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 1px 2px rgba(42,37,25,.04);
+  }
+  .card.accent-wheat{border-top-color:var(--wheat);}
+
+  label{font-family:'Fraunces',serif;font-size:14.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--ink);}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5;}
+  .hint a{color:var(--forest);font-weight:600;}
+
+  input[type=password], input[type=text]{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-size:14px;
+    background:#fffef9;
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+  }
+  input[type=password]:focus, input[type=text]:focus{
+    outline:none;border-color:var(--forest);box-shadow:0 0 0 3px var(--forest-tint);
+  }
+  input[type=file]{
+    width:100%;
+    padding:10px;
+    border:1px dashed var(--wheat-dark);
+    border-radius:8px;
+    background:var(--wheat-tint);
+    font-size:13px;
+    color:var(--soil);
+  }
+
+  .extract-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:14px;}
+  .extract-label{font-size:13px;color:var(--muted);}
+  .extract-btn{
+    width:52px;height:52px;
+    min-width:52px;
+    border-radius:50%;
+    background:var(--forest);
+    border:none;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    box-shadow:0 2px 8px rgba(47,93,69,.4);
+    transition:background .15s ease, transform .1s ease;
+    padding:0;
+  }
+  .extract-btn:hover{background:var(--forest-dark);transform:translateY(-1px);}
+  .extract-btn:active{transform:translateY(0);}
+  .extract-btn:disabled{background:#b9b2a0;box-shadow:none;cursor:not-allowed;transform:none;}
+  .extract-btn svg{width:22px;height:22px;}
+  .extract-btn .spinner{width:20px;height:20px;margin:0;border-width:2.5px;}
+
+  button.btn-secondary{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    background:var(--forest-tint);
+    color:var(--forest-dark);
+    border:1px solid var(--border);
+    font-size:14px;
+    font-weight:600;
+    font-family:'Inter',sans-serif;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  button.btn-secondary:hover{background:#d9ead9;}
+  .btn-row{display:flex;gap:10px;margin-top:12px;}
+
+  .status{font-size:13px;margin-top:10px;font-weight:500;}
+  .status.ok{color:var(--ok);}
+  .status.err{color:var(--err);}
+
+  .tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:14px;gap:4px;}
+  .tab{
+    padding:8px 16px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--muted);
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+  }
+  .tab.active{color:var(--forest-dark);border-bottom:2px solid var(--wheat);}
+
+  pre{
+    background:#241f16;
+    color:#ecdfc2;
+    padding:14px;
+    border-radius:8px;
+    overflow-x:auto;
+    font-size:12.5px;
+    line-height:1.5;
+    max-height:420px;
+    border:1px solid var(--soil);
+  }
+
+  .field{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f1ead6;font-size:13.5px;}
+  .field:last-child{border-bottom:none;}
+  .field .k{color:var(--muted);}
+  .field .v{font-weight:600;text-align:right;max-width:60%;color:var(--ink);}
+
+  .badge{
+    display:inline-block;
+    background:var(--wheat-tint);
+    color:var(--wheat-dark);
+    font-size:12px;
+    font-weight:700;
+    padding:4px 12px;
+    border-radius:20px;
+    border:1px solid #ecd9a6;
+  }
+
+  .hidden{display:none;}
+  .section-title{
+    font-family:'Fraunces',serif;
+    font-size:14px;font-weight:600;margin:18px 0 6px;
+    color:var(--forest-dark);
+    padding-bottom:4px;
+    border-bottom:2px solid var(--forest-tint);
+  }
+  .spinner{
+    display:inline-block;border:2px solid #fff;border-top-color:transparent;
+    border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header-band">
+    <div class="header-inner">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C12 2 8 6 8 11C8 14.3137 9.79086 16 12 16C14.2091 16 16 14.3137 16 11C16 6 12 2 12 2Z" fill="#1f4433"/>
+          <path d="M12 16V22" stroke="#1f4433" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M12 19C12 19 9 19.3 8 21" stroke="#1f4433" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M12 19C12 19 15 19.3 16 21" stroke="#1f4433" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1>RuralFin</h1>
+        <p class="subtitle">Extração inteligente de dados de nota fiscal</p>
+      </div>
+    </div>
+  </div>
+
+  {% include 'nav.html' %}
+  <!-- Chave de API -->
+  <div class="card">
+    <label for="apiKey">Chave de API do Gemini</label>
+    <input type="password" id="apiKey" placeholder="Cole sua API Key aqui" />
+    <div class="hint">
+      Obtenha sua chave em
+      <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com/app/apikey</a>.
+      A chave digitada é usada nesta extração e não é gravada no banco. Se houver uma chave configurada no servidor, pode deixar este campo vazio.
+    </div>
+  </div>
+
+  <!-- Upload -->
+  <div class="card">
+    <label for="pdfFile">Selecione o arquivo PDF da nota fiscal</label>
+    <input type="file" id="pdfFile" accept="application/pdf" />
+    <div id="fileInfo" class="hint"></div>
+
+    <div class="extract-row">
+      <span class="extract-label" id="extractLabel">Selecione um PDF para habilitar a extração</span>
+      <button id="extractBtn" class="extract-btn" disabled title="Extrair Dados">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <div id="status" class="status"></div>
+  </div>
+
+  <!-- Resultado -->
+  <div class="card accent-wheat hidden" id="resultCard">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <strong>Dados Extraídos</strong>
+      <span class="badge" id="classificacaoBadge"></span>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="formatted">Visualização Formatada</div>
+      <div class="tab" data-tab="json">JSON</div>
+    </div>
+
+    <div id="tab-formatted"></div>
+    <pre id="tab-json" class="hidden"></pre>
+
+    <div class="btn-row">
+      <button class="btn-secondary" id="downloadJson">Baixar .JSON</button>
+      <button class="btn-secondary" id="downloadTxt">Baixar .TXT</button>
+    </div>
+  </div>
+
+  {% include 'revisao.html' %}
+</div>
+
+<script src="/static/revisao.js"></script>
+<script>
+let selectedFile = null;
+let extractedData = null;
+
+const apiKeyInput = document.getElementById("apiKey");
+const fileInput = document.getElementById("pdfFile");
+const fileInfo = document.getElementById("fileInfo");
+const extractBtn = document.getElementById("extractBtn");
+const extractLabel = document.getElementById("extractLabel");
+const statusEl = document.getElementById("status");
+const resultCard = document.getElementById("resultCard");
+const tabFormatted = document.getElementById("tab-formatted");
+const tabJson = document.getElementById("tab-json");
+const classificacaoBadge = document.getElementById("classificacaoBadge");
+
+fileInput.addEventListener("change", () => {
+  extractedData = null;
+  resultCard.classList.add('hidden');
+  notaEditor.classList.add('hidden');
+  invalidarConsulta();
+  selectedFile = fileInput.files[0] || null;
+  if (selectedFile) {
+    fileInfo.textContent = `${selectedFile.name} (${(selectedFile.size / 1024).toFixed(1)} KB)`;
+    extractBtn.disabled = false;
+    extractLabel.textContent = "Pronto! Clique na seta para extrair";
+  } else {
+    fileInfo.textContent = "";
+    extractBtn.disabled = true;
+    extractLabel.textContent = "Selecione um PDF para habilitar a extração";
+  }
+});
+
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    if (tab.dataset.tab === "formatted") {
+      tabFormatted.classList.remove("hidden");
+      tabJson.classList.add("hidden");
+    } else {
+      tabFormatted.classList.add("hidden");
+      tabJson.classList.remove("hidden");
+    }
+  });
+});
+
+function setStatus(msg, type) {
+  statusEl.textContent = msg;
+  statusEl.className = "status" + (type ? " " + type : "");
+}
+
+// Envia o PDF para o backend Flask, que chama o Gemini pelo servidor
+async function extractViaBackend(file, apiKey) {
+  const formData = new FormData();
+  formData.append("pdf", file);
+  formData.append("apiKey", apiKey);
+
+  const res = await fetch("/api/extrair", { method: "POST", body: formData, headers: {'X-CSRF-Token': csrfToken} });
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Erro desconhecido ao extrair dados.");
+  }
+  return data;
+}
+
+function renderFormatted(d) {
+  // Os dados vêm de um documento externo; escape antes de compor o HTML.
+  const escapar = valor => typeof valor === 'string' ? valor.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) :
+    Array.isArray(valor) ? valor.map(escapar) : valor && typeof valor === 'object' ? Object.fromEntries(Object.entries(valor).map(([k,v])=>[k,escapar(v)])) : valor;
+  const original = d;
+  d = escapar(d);
+  const fornecedor = d.fornecedor || {};
+  const faturado = d.faturado || {};
+  const parcelas = d.parcelas || [];
+
+  let html = `
+    <div class="section-title">Nota Fiscal</div>
+    <div class="field"><span class="k">Número</span><span class="v">${d.numeroNotaFiscal || "-"}</span></div>
+    <div class="field"><span class="k">Data de Emissão</span><span class="v">${d.dataEmissao || "-"}</span></div>
+    <div class="field"><span class="k">Valor Total</span><span class="v">R$ ${Number(d.valorTotal || 0).toFixed(2)}</span></div>
+
+    <div class="section-title">Fornecedor</div>
+    <div class="field"><span class="k">Razão Social</span><span class="v">${fornecedor.razaoSocial || "-"}</span></div>
+    <div class="field"><span class="k">Fantasia</span><span class="v">${fornecedor.fantasia || "-"}</span></div>
+    <div class="field"><span class="k">CNPJ</span><span class="v">${fornecedor.cnpj || "-"}</span></div>
+
+    <div class="section-title">Faturado</div>
+    <div class="field"><span class="k">Nome Completo</span><span class="v">${faturado.nomeCompleto || "-"}</span></div>
+    <div class="field"><span class="k">CPF</span><span class="v">${faturado.cpf || "-"}</span></div>
+
+    <div class="section-title">Produtos</div>
+    <div class="field"><span class="v" style="text-align:left;max-width:100%;">${d.descricaoProdutos || "-"}</span></div>
+
+    <div class="section-title">Parcelas (${parcelas.length})</div>
+  `;
+
+  if (parcelas.length === 0) {
+    html += `<div class="field"><span class="k">Nenhuma parcela identificada</span></div>`;
+  } else {
+    parcelas.forEach(p => {
+      html += `<div class="field"><span class="k">Parcela ${p.numero || "-"} — Venc. ${p.dataVencimento || "-"}</span><span class="v">R$ ${Number(p.valor || 0).toFixed(2)}</span></div>`;
+    });
+  }
+
+  tabFormatted.innerHTML = html;
+  tabJson.textContent = JSON.stringify(original, null, 2);
+  classificacaoBadge.textContent = original.classificacaoDespesa || "Sem classificação";
+}
+
+function buildTxt(d) {
+  const fornecedor = d.fornecedor || {};
+  const faturado = d.faturado || {};
+  const parcelas = d.parcelas || [];
+
+  let lines = [];
+  lines.push("EXTRAÇÃO DE DADOS - NOTA FISCAL");
+  lines.push("================================");
+  lines.push(`Número da Nota Fiscal: ${d.numeroNotaFiscal || "-"}`);
+  lines.push(`Data de Emissão: ${d.dataEmissao || "-"}`);
+  lines.push(`Valor Total: R$ ${Number(d.valorTotal || 0).toFixed(2)}`);
+  lines.push(`Classificação da Despesa: ${d.classificacaoDespesa || "-"}`);
+  lines.push("");
+  lines.push("FORNECEDOR");
+  lines.push(`  Razão Social: ${fornecedor.razaoSocial || "-"}`);
+  lines.push(`  Fantasia: ${fornecedor.fantasia || "-"}`);
+  lines.push(`  CNPJ: ${fornecedor.cnpj || "-"}`);
+  lines.push("");
+  lines.push("FATURADO");
+  lines.push(`  Nome Completo: ${faturado.nomeCompleto || "-"}`);
+  lines.push(`  CPF: ${faturado.cpf || "-"}`);
+  lines.push("");
+  lines.push("PRODUTOS");
+  lines.push(`  ${d.descricaoProdutos || "-"}`);
+  lines.push("");
+  lines.push(`PARCELAS (${parcelas.length})`);
+  if (parcelas.length === 0) {
+    lines.push("  Nenhuma parcela identificada");
+  } else {
+    parcelas.forEach(p => {
+      lines.push(`  Parcela ${p.numero || "-"} | Vencimento: ${p.dataVencimento || "-"} | Valor: R$ ${Number(p.valor || 0).toFixed(2)}`);
+    });
+  }
+  return lines.join("\n");
+}
+
+function downloadFile(content, filename, mime) {
+  const blob = new Blob([content], { type: mime });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+const extractIconHTML = extractBtn.innerHTML;
+const spinnerIconHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2.5px;"></span>';
+
+extractBtn.addEventListener("click", async () => {
+  const apiKey = apiKeyInput.value.trim();
+
+  if (!selectedFile) {
+    setStatus("Selecione um arquivo PDF.", "err");
+    return;
+  }
+
+  extractBtn.disabled = true;
+  fileInput.disabled = true;
+  notaEditor.classList.add('hidden');
+  extractBtn.innerHTML = spinnerIconHTML;
+  extractLabel.textContent = "Extraindo dados...";
+  setStatus("Enviando PDF para a IA, aguarde...", "");
+  resultCard.classList.add("hidden");
+
+  try {
+    const data = await extractViaBackend(selectedFile, apiKey);
+
+    extractedData = data;
+    renderFormatted(data);
+    resultCard.classList.remove("hidden");
+    abrirNota(data, selectedFile);
+    setStatus("Dados extraídos com sucesso.", "ok");
+    extractLabel.textContent = "Pronto! Clique na seta para extrair novamente";
+  } catch (err) {
+    console.error(err);
+    setStatus("Falha ao extrair dados: " + err.message, "err");
+    extractLabel.textContent = "Pronto! Clique na seta para extrair";
+  } finally {
+    extractBtn.disabled = false;
+    fileInput.disabled = false;
+    extractBtn.innerHTML = extractIconHTML;
+  }
+});
+
+document.getElementById("downloadJson").addEventListener("click", () => {
+  if (!extractedData) return;
+  downloadFile(JSON.stringify(extractedData, null, 2), "nota-fiscal.json", "application/json");
+});
+
+document.getElementById("downloadTxt").addEventListener("click", () => {
+  if (!extractedData) return;
+  downloadFile(buildTxt(extractedData), "nota-fiscal.txt", "text/plain");
+});
+</script>
+</body>
+</html>

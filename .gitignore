@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+.vercel/
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.log
+.local-postgres/
+tmp/
+
+!.env.example

@@ -1,0 +1,13 @@
+.git
+.env
+.env.*
+.venv
+.local-postgres
+.pytest_cache
+__pycache__
+tmp
+tests
+examples
+pgadmin-servidor.json
+banco_local.py
+iniciar.ps1
