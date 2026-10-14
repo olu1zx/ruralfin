@@ -240,6 +240,7 @@
   <div class="card">
     <label for="pdfFile">Selecione o arquivo PDF da nota fiscal</label>
     <input type="file" id="pdfFile" accept="application/pdf" />
+    <div class="hint">Envie um PDF de até {{ pdf_max_mb }} MB.</div>
     <div id="fileInfo" class="hint"></div>
 
     <div class="extract-row">
@@ -281,6 +282,7 @@
 <script>
 let selectedFile = null;
 let extractedData = null;
+const maxPdfBytes = {{ pdf_max_mb | tojson }} * 1024 * 1024;
 
 const apiKeyInput = document.getElementById("apiKey");
 const fileInput = document.getElementById("pdfFile");
@@ -299,6 +301,14 @@ fileInput.addEventListener("change", () => {
   notaEditor.classList.add('hidden');
   invalidarConsulta();
   selectedFile = fileInput.files[0] || null;
+  if (selectedFile && selectedFile.size > maxPdfBytes) {
+    selectedFile = null;
+    fileInfo.textContent = '';
+    extractBtn.disabled = true;
+    extractLabel.textContent = 'Selecione um PDF menor';
+    setStatus('O PDF ultrapassa o limite de {{ pdf_max_mb }} MB.', 'err');
+    return;
+  }
   if (selectedFile) {
     fileInfo.textContent = `${selectedFile.name} (${(selectedFile.size / 1024).toFixed(1)} KB)`;
     extractBtn.disabled = false;

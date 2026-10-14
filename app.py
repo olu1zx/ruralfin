@@ -72,7 +72,15 @@ registrar_comandos(app)
 def tokens_template():
     if 'csrf' not in session:
         session['csrf'] = secrets.token_urlsafe(32)
-    return {'csrf_token': session['csrf'], 'login_ativo': bool(app.config['APP_PASSWORD'])}
+    return {'csrf_token': session['csrf'], 'login_ativo': bool(app.config['APP_PASSWORD']),
+            'pdf_max_mb': app.config['PDF_MAX_MB']}
+
+
+@app.after_request
+def proteger_cache(resposta):
+    if request.endpoint != 'static':
+        resposta.headers['Cache-Control'] = 'no-store'
+    return resposta
 
 
 @app.before_request

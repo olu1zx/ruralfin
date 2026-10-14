@@ -159,6 +159,8 @@ O projeto está preparado para Flask na Vercel com PostgreSQL hospedado, por exe
 Neon. O PostgreSQL deste computador atende somente ao uso local: o site publicado
 precisa de sua própria conexão de banco na nuvem.
 
+Repositório do projeto: https://github.com/olu1zx/ruralfin-n2
+
 1. Publique somente os arquivos do projeto no GitHub. `.env`, `.venv`, banco local,
    backups e credenciais já estão ignorados.
 2. Importe o repositório na Vercel, no projeto RuralFin. Se publicar a pasta inteira
@@ -169,6 +171,12 @@ precisa de sua própria conexão de banco na nuvem.
 5. Execute `sql/001_schema.sql` no banco hospedado ou `flask init-db` com a conexão
    desse ambiente. O esquema não deve ser inicializado em toda requisição.
 6. Publique e teste login, extração, consulta, lançamento e leitura da conta.
+
+Também é possível publicar o código local com `vercel --prod --scope luiz-b06f`,
+após conferir o projeto vinculado com `vercel project inspect`. O envio pelo
+terminal não depende da conexão de Git da Vercel. Para ativar publicação
+automática a cada push, conecte sua conta GitHub em **Vercel > Settings >
+Authentication > Login Connections** e então conecte o repositório ao projeto.
 
 O login é uma conta acadêmica única, definida nas variáveis de ambiente. A chave
 do Gemini pode continuar sendo informada na interface, ou configurada no servidor.
