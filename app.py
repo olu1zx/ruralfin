@@ -906,8 +906,9 @@ def extrair():
         "x-goog-api-key": api_key,
     }
 
-    # Tenta cada modelo da lista, com repetição em caso de sobrecarga (503).
+    # Limita as tentativas e aguarda antes de repetir falhas temporárias.
     ultimo_erro = None
+    ultimo_status = 502
     for modelo in GEMINI_MODELS:
         for tentativa in range(1, 3):  # até 2 tentativas por modelo
             try:
@@ -916,9 +917,13 @@ def extrair():
                 )
             except requests.exceptions.RequestException:
                 ultimo_erro = 'Falha de conexão com a API do Gemini. Tente novamente.'
+                ultimo_status = 502
+                if tentativa < 2:
+                    time.sleep(2 ** tentativa + secrets.randbelow(1000) / 1000)
                 continue
 
             if resp.status_code == 200:
+                ultimo_status = 502
                 try:
                     data = resp.json()
                     partes = data['candidates'][0]['content']['parts']
@@ -938,26 +943,31 @@ def extrair():
 
                 return jsonify(extraido)
 
-            if resp.status_code == 503:
-                # Modelo sobrecarregado: espera um pouco e tenta de novo / próximo modelo.
+            if resp.status_code in (408, 429, 500, 502, 503, 504):
+                ultimo_status = 429 if resp.status_code == 429 else 503
                 ultimo_erro = (
-                    f"Modelo {modelo} sobrecarregado (503). Tentando alternativa..."
+                    'Limite da API do Gemini atingido. Aguarde alguns minutos ou confira sua cota.'
+                    if resp.status_code == 429 else
+                    'O Gemini está temporariamente indisponível ou sobrecarregado. '
+                    'As tentativas automáticas não tiveram sucesso. Aguarde alguns minutos e tente novamente.'
                 )
-                time.sleep(2)
+                if tentativa < 2:
+                    time.sleep(2 ** tentativa + secrets.randbelow(1000) / 1000)
                 continue
 
             if resp.status_code == 404:
                 # Modelo indisponível/descontinuado: pula direto para o próximo modelo.
-                ultimo_erro = f"Modelo {modelo} indisponível (404). Tentando alternativa..."
+                ultimo_erro = 'Os modelos configurados não estão disponíveis para esta chave. Confira GEMINI_MODELS.'
+                ultimo_status = 502
                 break
 
-            # Outros erros (401, 400, 429 etc.) não valem a pena repetir.
+            # Erros de chave, acesso ou solicitação não são repetidos.
             mensagens = {400: 'A API rejeitou a solicitação. Confira o modelo configurado e o PDF.',
                         401: 'Chave da API do Gemini inválida.', 403: 'A chave não tem acesso ao Gemini.',
                         429: 'Limite da API do Gemini atingido. Aguarde ou confira sua cota.'}
             return jsonify({'error': mensagens.get(resp.status_code, f'A API do Gemini retornou erro {resp.status_code}.')}), 502
 
-    return jsonify({"error": ultimo_erro or "Falha desconhecida ao consultar o Gemini."}), 502
+    return jsonify({"error": ultimo_erro or "Falha desconhecida ao consultar o Gemini."}), ultimo_status
 
 @app.cli.group('banco-local')
 def banco_local():

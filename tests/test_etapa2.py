@@ -190,3 +190,51 @@ def test_limite_pdf_antes_da_chamada_gemini(cliente, ambiente, monkeypatch):
     resposta=cliente.post('/api/extrair',data={'apiKey':'teste','pdf':(BytesIO(b'%PDF-'+b'0'*(1024*1024)),'grande.pdf')})
     assert resposta.status_code==413
     assert '1 MB' in resposta.json['error']
+
+
+def test_extracao_usa_alternativa_apos_sobrecarga(cliente, nota, monkeypatch):
+    import app as modulo
+    chamadas, esperas = [], []
+    class Resposta:
+        def __init__(self, status): self.status_code = status
+        def json(self): return {'candidates': [{'content': {'parts': [{'text': json.dumps(nota)}]}}]}
+    def enviar(url, **kwargs):
+        chamadas.append(url)
+        return Resposta(503 if len(chamadas) <= 2 else 200)
+    monkeypatch.setattr(modulo, 'GEMINI_MODELS', ['principal', 'alternativo'])
+    monkeypatch.setattr(modulo.requests, 'post', enviar)
+    monkeypatch.setattr(modulo.time, 'sleep', esperas.append)
+    resposta = cliente.post('/api/extrair', data={'apiKey': 'teste', 'pdf': (BytesIO(b'%PDF-1.4\n%%EOF'), 'nota.pdf')})
+    assert resposta.status_code == 200 and resposta.json == nota
+    assert len(chamadas) == 3 and 'alternativo:generateContent' in chamadas[-1]
+    assert len(esperas) == 1 and 2 <= esperas[0] < 3
+
+
+@pytest.mark.parametrize('status', [408, 429, 500, 502, 503, 504])
+def test_extracao_encerra_tentativas_com_aviso_final(cliente, monkeypatch, status):
+    import app as modulo
+    chamadas, esperas = [], []
+    class Resposta: status_code = status
+    def enviar(url, **kwargs):
+        chamadas.append(url)
+        return Resposta()
+    monkeypatch.setattr(modulo, 'GEMINI_MODELS', ['principal', 'alternativo'])
+    monkeypatch.setattr(modulo.requests, 'post', enviar)
+    monkeypatch.setattr(modulo.time, 'sleep', esperas.append)
+    resposta = cliente.post('/api/extrair', data={'apiKey': 'teste', 'pdf': (BytesIO(b'%PDF-1.4\n%%EOF'), 'nota.pdf')})
+    assert resposta.status_code == (429 if status == 429 else 503)
+    assert 'Tentando alternativa' not in resposta.json['error']
+    assert len(chamadas) == 4 and len(esperas) == 2
+
+
+def test_extracao_nao_repete_erro_de_chave(cliente, monkeypatch):
+    import app as modulo
+    chamadas = []
+    class Resposta: status_code = 403
+    def enviar(url, **kwargs):
+        chamadas.append(url)
+        return Resposta()
+    monkeypatch.setattr(modulo.requests, 'post', enviar)
+    resposta = cliente.post('/api/extrair', data={'apiKey': 'teste', 'pdf': (BytesIO(b'%PDF-1.4\n%%EOF'), 'nota.pdf')})
+    assert resposta.status_code == 502 and len(chamadas) == 1
+    assert 'chave' in resposta.json['error']
