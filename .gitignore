@@ -9,5 +9,7 @@ __pycache__/
 *.log
 .local-postgres/
 tmp/
+.agents/
+skills-lock.json
 
 !.env.example
