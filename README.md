@@ -204,13 +204,3 @@ Referências: [Flask na Vercel](https://vercel.com/docs/frameworks/backend/flask
 [importação de servidores no pgAdmin](https://www.pgadmin.org/docs/pgadmin4/latest/import_export_servers.html),
 [transações no Psycopg](https://www.psycopg.org/psycopg3/docs/basic/transactions.html),
 [saída estruturada do Gemini](https://ai.google.dev/gemini-api/docs/generate-content/structured-output).
-
-## Escopo acadêmico
-
-Esta versão implementa a etapa 2 e mantém a etapa 1. A documentação inicial descreve
-um produto mais amplo: importação automática de e-mail, baixas parciais,
-comprovantes de pagamento, relatórios e perfis individuais continuam como evolução.
-Contas e parcelas cadastradas não significam pagamento/recebimento realizado.
-
-O PDF da etapa 2 informa entrega em **27/10/2026**; o da etapa 1 menciona
-**28/10/2026** para a segunda entrega. Confirme a data válida no Classroom.
