@@ -381,9 +381,18 @@ def test_id_ordena_ascendente_e_descendente_em_todos_os_cadastros(cliente, nota)
     cliente.post('/api/lancar', json=nota)
     nota['numeroNotaFiscal'] = 'OUTRA-NOTA'
     nota['classificacaoDespesa'] = 'INVESTIMENTOS'
+    nota['dataEmissao'] = '13/10/2026'
     cliente.post('/api/lancar', json=nota)
     for recurso in ('pessoas', 'classificacoes', 'contas'):
         crescente = cliente.get(f'/api/cadastros/{recurso}?todos=1&ordem=id&direcao=asc').json['registros']
         decrescente = cliente.get(f'/api/cadastros/{recurso}?todos=1&ordem=id&direcao=desc').json['registros']
         assert [r['id'] for r in crescente] == sorted(r['id'] for r in crescente)
         assert [r['id'] for r in decrescente] == list(reversed([r['id'] for r in crescente]))
+        padrao = cliente.get(f'/api/cadastros/{recurso}?todos=1').json['registros']
+        assert [r['id'] for r in padrao] == [r['id'] for r in crescente]
+        termo = {'pessoas': 'A', 'classificacoes': 'DESPESA', 'contas': 'IGUA'}[recurso]
+        busca = cliente.get(f'/api/cadastros/{recurso}', query_string={'busca': termo}).json['registros']
+        assert len(busca) >= 2
+        assert [r['id'] for r in busca] == sorted(r['id'] for r in busca)
+        paginas = [cliente.get(f'/api/cadastros/{recurso}?todos=1&limite=1&pagina={p}').json['registros'][0]['id'] for p in (1, 2)]
+        assert paginas == [r['id'] for r in crescente[:2]]

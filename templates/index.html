@@ -698,7 +698,7 @@ const configs = {
   classificacoes: [['id','ID'],['tipo','Tipo'],['descricao','Descrição'],['status','Situação']],
   contas: [['id','ID'],['tipo','Tipo'],['numero_nota_fiscal','Nota'],['data_emissao','Emissão'],['pessoa','Fornecedor / cliente'],['faturado','Faturado'],['valor_total','Valor (R$)'],['status','Situação']],
 };
-let ordemTabela = recursoCadastro==='pessoas'?'razao_social':recursoCadastro==='contas'?'data_emissao':'descricao';
+let ordemTabela = 'id';
 let direcaoTabela = 'asc', paginaTabela=1, buscaRealizada=false, registroEditando=null;
 let buscaAtual='', statusAtual='ATIVO';
 const colunasTabela=configs[recursoCadastro];

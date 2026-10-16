@@ -345,11 +345,11 @@ def lancar():
 
 RECURSOS = {
     'pessoas': {'tabela': 'pessoas', 'colunas': ['id', 'tipo', 'razao_social', 'fantasia', 'documento', 'status'],
-                'busca': ['razao_social', 'fantasia', 'documento', 'tipo'], 'ordem': 'razao_social'},
+                'busca': ['razao_social', 'fantasia', 'documento', 'tipo'], 'ordem': 'id'},
     'classificacoes': {'tabela': 'classificacao', 'colunas': ['id', 'tipo', 'descricao', 'status'],
-                       'busca': ['descricao', 'tipo'], 'ordem': 'descricao'},
+                       'busca': ['descricao', 'tipo'], 'ordem': 'id'},
     'contas': {'tabela': 'movimentocontas', 'colunas': ['id', 'tipo', 'numero_nota_fiscal', 'data_emissao', 'valor_total', 'status'],
-               'busca': ['numero_nota_fiscal', 'descricao_produtos', 'tipo'], 'ordem': 'data_emissao'},
+               'busca': ['numero_nota_fiscal', 'descricao_produtos', 'tipo'], 'ordem': 'id'},
 }
 
 
