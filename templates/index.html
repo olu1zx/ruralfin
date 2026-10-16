@@ -1,46 +1,5 @@
-{% if pagina is defined and pagina == 'login' %}
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Entrar - RuralFin</title><style>
-:root{--bg:#f7f3e8;--surface:#fffdf6;--ink:#2a2519;--muted:#7a6f5c;--border:#e6dcc2;--forest:#2f5d45;--forest-dark:#1f4433;--forest-tint:#e7f0e9;--wheat:#c9932f;--wheat-tint:#f7ecd3;--err:#a8422f}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;padding:0 16px 48px}.wrap{max-width:1100px;margin:auto}.marca{background:linear-gradient(135deg, var(--forest) 0%, var(--forest-dark) 100%);padding:24px;color:#fffdf6;border-radius:0 0 16px 16px;margin-bottom:22px}.marca h1{font-family:Fraunces,Georgia,serif;margin:0;font-size:28px}.marca p{color:#d9e6dd;margin:6px 0 0}.nav{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.nav a{padding:9px 13px;border:1px solid var(--border);border-radius:7px;text-decoration:none;color:var(--forest-dark);background:var(--surface);font-weight:600}.nav a[aria-current=page]{background:var(--forest);color:white}.nav form{margin-left:auto}.card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--forest);border-radius:10px;padding:20px;margin-bottom:16px}h2{font-family:Fraunces,Georgia,serif;font-size:21px;margin:0 0 16px}h3{font-size:15px;margin:18px 0 10px}label{display:block;font-weight:600;font-size:13px;margin:0 0 6px}input,select,textarea{font:inherit;width:100%;padding:10px;border:1px solid var(--border);border-radius:7px;background:#fffef9;color:var(--ink)}input:focus,select:focus,textarea:focus{outline:2px solid var(--forest);outline-offset:1px}textarea{resize:vertical;min-height:70px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}button,.button{font:inherit;border:1px solid var(--border);border-radius:7px;padding:10px 16px;cursor:pointer;color:var(--forest-dark);background:var(--forest-tint);font-weight:600;text-decoration:none}button.primary,.button.primary{color:white;background:var(--forest);border-color:var(--forest)}button.danger{background:#faeee9;color:var(--err)}button:disabled{opacity:.5;cursor:not-allowed}button:hover:not(:disabled){filter:brightness(.96)}.muted,.hint{color:var(--muted);font-size:12px;line-height:1.6}.status{margin-top:12px;line-height:1.6}.status.err{color:var(--err)}.status.ok{color:var(--forest)}.hidden{display:none!important}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid var(--border);padding:12px 10px;text-align:left;vertical-align:middle}th button{padding:0;border:0;background:none;text-align:left}td button{padding:6px 10px;font-size:12px;margin:2px}.badge{display:inline-block;padding:4px 9px;background:var(--wheat-tint);border-radius:12px;font-size:11px;font-weight:700}.consulta{padding:12px;background:var(--forest-tint);border:1px solid var(--border);border-radius:7px;margin-top:8px}.consulta.pendente{background:var(--wheat-tint)}.consulta strong,.consulta span{display:block;margin:3px 0}.parcelas{display:grid;grid-template-columns:50px 1fr 1fr auto;gap:8px;align-items:end;margin:10px 0}.parcelas .numero{align-self:center}.search{display:grid;grid-template-columns:2fr 1fr auto auto;gap:10px;align-items:end}.search-actions{display:flex;gap:8px}.pagination{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px}.editor{scroll-margin-top:20px}.notice{padding:12px;border-left:3px solid var(--wheat);background:var(--wheat-tint);line-height:1.6}.check-rows{margin-top:14px}.inline{display:inline-block}a{color:var(--forest-dark)}@media(max-width:650px){.grid,.search{grid-template-columns:1fr}.full{grid-column:auto}.parcelas{grid-template-columns:30px 1fr}.parcelas button{grid-column:2}.nav form{margin-left:0}.pagination{flex-wrap:wrap}.card{padding:15px}}
-
-</style></head><body><main class="wrap" style="max-width:460px"><header class="marca"><h1>RuralFin</h1><p>Controle financeiro rural</p></header><section class="card"><h2>Entrar no sistema</h2><form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><label for="usuario">Usuário</label><input id="usuario" name="usuario" autocomplete="username" required><br><br><label for="senha">Senha</label><input type="password" id="senha" name="senha" autocomplete="current-password" required><div class="actions"><button class="primary">Entrar</button></div>{% if erro %}<p class="status err" role="alert">{{ erro }}</p>{% endif %}</form></section></main></body></html>
-
-{% elif recurso is defined %}
-<!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="csrf-token" content="{{ csrf_token }}"><title>{{ titulo }} - RuralFin</title>
-<style>
-:root{--bg:#f7f3e8;--surface:#fffdf6;--ink:#2a2519;--muted:#7a6f5c;--border:#e6dcc2;--forest:#2f5d45;--forest-dark:#1f4433;--forest-tint:#e7f0e9;--wheat:#c9932f;--wheat-tint:#f7ecd3;--err:#a8422f}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;padding:0 16px 48px}.wrap{max-width:1100px;margin:auto}.marca{background:linear-gradient(135deg, var(--forest) 0%, var(--forest-dark) 100%);padding:24px;color:#fffdf6;border-radius:0 0 16px 16px;margin-bottom:22px}.marca h1{font-family:Fraunces,Georgia,serif;margin:0;font-size:28px}.marca p{color:#d9e6dd;margin:6px 0 0}.nav{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.nav a{padding:9px 13px;border:1px solid var(--border);border-radius:7px;text-decoration:none;color:var(--forest-dark);background:var(--surface);font-weight:600}.nav a[aria-current=page]{background:var(--forest);color:white}.nav form{margin-left:auto}.card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--forest);border-radius:10px;padding:20px;margin-bottom:16px}h2{font-family:Fraunces,Georgia,serif;font-size:21px;margin:0 0 16px}h3{font-size:15px;margin:18px 0 10px}label{display:block;font-weight:600;font-size:13px;margin:0 0 6px}input,select,textarea{font:inherit;width:100%;padding:10px;border:1px solid var(--border);border-radius:7px;background:#fffef9;color:var(--ink)}input:focus,select:focus,textarea:focus{outline:2px solid var(--forest);outline-offset:1px}textarea{resize:vertical;min-height:70px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}button,.button{font:inherit;border:1px solid var(--border);border-radius:7px;padding:10px 16px;cursor:pointer;color:var(--forest-dark);background:var(--forest-tint);font-weight:600;text-decoration:none}button.primary,.button.primary{color:white;background:var(--forest);border-color:var(--forest)}button.danger{background:#faeee9;color:var(--err)}button:disabled{opacity:.5;cursor:not-allowed}button:hover:not(:disabled){filter:brightness(.96)}.muted,.hint{color:var(--muted);font-size:12px;line-height:1.6}.status{margin-top:12px;line-height:1.6}.status.err{color:var(--err)}.status.ok{color:var(--forest)}.hidden{display:none!important}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid var(--border);padding:12px 10px;text-align:left;vertical-align:middle}th button{padding:0;border:0;background:none;text-align:left}td button{padding:6px 10px;font-size:12px;margin:2px}.badge{display:inline-block;padding:4px 9px;background:var(--wheat-tint);border-radius:12px;font-size:11px;font-weight:700}.consulta{padding:12px;background:var(--forest-tint);border:1px solid var(--border);border-radius:7px;margin-top:8px}.consulta.pendente{background:var(--wheat-tint)}.consulta strong,.consulta span{display:block;margin:3px 0}.parcelas{display:grid;grid-template-columns:50px 1fr 1fr auto;gap:8px;align-items:end;margin:10px 0}.parcelas .numero{align-self:center}.search{display:grid;grid-template-columns:2fr 1fr auto auto;gap:10px;align-items:end}.search-actions{display:flex;gap:8px}.pagination{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px}.editor{scroll-margin-top:20px}.notice{padding:12px;border-left:3px solid var(--wheat);background:var(--wheat-tint);line-height:1.6}.check-rows{margin-top:14px}.inline{display:inline-block}a{color:var(--forest-dark)}@media(max-width:650px){.grid,.search{grid-template-columns:1fr}.full{grid-column:auto}.parcelas{grid-template-columns:30px 1fr}.parcelas button{grid-column:2}.nav form{margin-left:0}.pagination{flex-wrap:wrap}.card{padding:15px}}
-
-</style></head>
-<body><main class="wrap">
-  <header class="marca"><h1>RuralFin</h1><p>Controle financeiro rural · {{ titulo }}</p></header>
-  <nav class="nav" aria-label="Navegação principal">
-  <a href="/" {% if request.path == '/' %}aria-current="page"{% endif %}>Importar nota</a>
-  <a href="/cadastros/pessoas" {% if request.path == '/cadastros/pessoas' %}aria-current="page"{% endif %}>Pessoas</a>
-  <a href="/cadastros/classificacoes" {% if request.path == '/cadastros/classificacoes' %}aria-current="page"{% endif %}>Classificações</a>
-  <a href="/cadastros/contas" {% if request.path == '/cadastros/contas' %}aria-current="page"{% endif %}>Contas</a>
-  {% if login_ativo %}<form method="post" action="/sair"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button type="submit">Sair</button></form>{% endif %}
-</nav>
-
-  <section class="card">
-    <h2>{{ titulo }}</h2>
-    <form id="buscarForm" class="search">
-      <div><label for="busca">Buscar por um ou mais termos</label><input id="busca" maxlength="200" placeholder="Nome, documento, descrição ou tipo"></div>
-      <div><label for="situacao">Situação</label><select id="situacao"><option value="ATIVO">Ativos</option><option value="INATIVO">Inativos</option><option value="TODOS">Ativos e inativos</option></select></div>
-      <button class="primary" type="submit">Buscar</button>
-      <button type="button" id="todosBtn">Todos os ativos</button>
-    </form>
-    <div id="cadastroStatus" class="status" role="status" aria-live="polite"></div>
-  </section>
-  <section class="card">
-    <div class="table-wrap"><table id="tabela"><thead id="cabecalho"></thead><tbody id="registros"></tbody></table></div>
-    <div class="pagination"><span id="contador" class="hint">Nenhum registro carregado.</span><div><button id="anteriorBtn" disabled>Anterior</button> <button id="proximaBtn" disabled>Próxima</button></div></div>
-    <div class="actions"><button id="novoBtn" class="primary">+ Novo registro</button></div>
-  </section>
-  {% if recurso == 'contas' %}
-    <!-- Mesmo editor para notas extraídas, criação manual e edição de contas. -->
+{% set tela_login = pagina is defined and pagina == 'login' %}
+{% macro editor_nota() -%}
 <section class="card editor hidden" id="notaEditor" aria-labelledby="editorTitulo">
   <h2 id="editorTitulo">Revisar dados da nota</h2>
   <p class="hint">Confira os dados antes de lançar. Se o PDF não informar um campo, preencha-o aqui.</p>
@@ -60,8 +19,8 @@
     </div>
     <h3>Faturado</h3>
     <div class="grid">
-      <div><label for="notaNome">Nome completo</label><input id="notaNome" maxlength="200" required></div>
-      <div><label for="notaCpf">CPF</label><input id="notaCpf" maxlength="14" required></div>
+      <div><label for="notaNome">Nome / razão social</label><input id="notaNome" maxlength="200" required></div>
+      <div><label for="notaCpfCnpj">CPF/CNPJ</label><input id="notaCpfCnpj" maxlength="18" required></div>
     </div>
     <h3>Classificações</h3>
     <label for="notaCategorias">Uma classificação por linha</label>
@@ -78,6 +37,298 @@
   <div class="actions hidden" id="lancarActions"><button class="primary" type="button" id="lancarBtn">Confirmar e lançar conta</button></div>
   <div id="notaStatus" class="status" role="status" aria-live="polite"></div>
 </section>
+{%- endmacro %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>{% if tela_login %}Entrar{% elif recurso is defined %}{{ titulo }}{% else %}Importar nota{% endif %} - RuralFin</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg:#f3f4e9; --surface:#fffdf6; --ink:#2a2519; --muted:#7a6f5c; --border:#e3ddc9;
+  --forest:#2f5d45; --forest-dark:#1f4433; --forest-tint:#e7f0e9;
+  --wheat:#c9932f; --wheat-dark:#9c7222; --wheat-tint:#f7ecd3; --soil:#7a5230;
+  --ok:#2f5d45; --err:#a8422f;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; padding:24px 20px 56px; color:var(--ink);
+  font:14px/1.5 Inter,Segoe UI,Arial,sans-serif; isolation:isolate;
+  background:radial-gradient(ellipse at 0 10%,#e1eadb 0,transparent 42%),
+    radial-gradient(ellipse at 100% 95%,#ece5c8 0,transparent 40%),var(--bg);
+  min-height:100vh;
+}
+.background-art { position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; color:var(--forest); }
+.background-art .sprout { position:absolute; top:180px; left:-58px; width:280px; opacity:.08; transform:rotate(-18deg); }
+.background-art .fields { position:absolute; right:-95px; bottom:-45px; width:520px; opacity:.1; }
+.background-art::after { content:''; position:absolute; width:140px; height:140px; top:80px; right:4%; border:1px solid #c9932f45; border-radius:50%; }
+.wrap { max-width:1100px; margin:0 auto; }
+.brand-header {
+  position:relative; display:flex; align-items:center; gap:20px; overflow:hidden;
+  padding:26px 30px; margin-bottom:20px; border-radius:20px;
+  background:linear-gradient(135deg,var(--forest) 0%,var(--forest-dark) 100%);
+  color:#fffdf6; box-shadow:0 8px 24px #1f443315;
+}
+.brand-header::after { content:''; position:absolute; width:380px; height:200px; right:-60px; bottom:-135px; border:1px solid #ffffff26; border-radius:50%; box-shadow:0 -20px 0 -1px #ffffff0a,0 -42px 0 -1px #ffffff07; transform:rotate(-18deg); }
+.logo-mark { flex:none; width:76px; height:76px; overflow:hidden; border-radius:18px; background:white; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 10px #122b2220; }
+.logo-mark img { display:block; width:112%; max-width:none; height:112%; object-fit:contain; }
+.brand-header h1 { font-family:Fraunces,Georgia,serif; font-weight:600; font-size:32px; line-height:1.2; margin:0; letter-spacing:.01em; color:#fffdf6; }
+.brand-header p { margin:6px 0 0; font-size:13px; color:#d9e6dd; }
+.nav { display:flex; align-items:center; flex-wrap:wrap; gap:8px; padding:8px; margin:0 0 24px; border:1px solid var(--border); border-radius:14px; background:#fffdf6d9; box-shadow:0 3px 10px #2a251906; }
+.nav a { padding:10px 17px; border:1px solid transparent; border-radius:9px; color:var(--forest-dark); text-decoration:none; font-weight:600; transition:background .15s; }
+.nav a:hover { background:var(--forest-tint); }
+.nav a[aria-current=page] { background:var(--forest); color:white; box-shadow:0 2px 6px #1f44331a; }
+.nav form { margin-left:auto; }
+.nav .logout-btn { width:42px; height:42px; padding:10px; display:flex; align-items:center; justify-content:center; background:#f8e6e0; color:#a63e30; border:1px solid #edc7bb; border-radius:9px; }
+.nav .logout-btn:hover { background:#ad493b; color:#fff; border-color:#ad493b; }
+.logout-btn svg { width:21px; height:21px; }
+.card { position:relative; background:var(--surface); border:1px solid var(--border); border-top:3px solid var(--forest); border-radius:14px; padding:24px; margin-bottom:20px; box-shadow:0 4px 18px #2a251905; }
+.card.accent-wheat { border-top-color:var(--wheat); }
+h2 { font-family:Fraunces,Georgia,serif; color:var(--forest-dark); font-size:23px; font-weight:600; margin:0 0 20px; }
+h3 { font-size:15px; margin:22px 0 12px; color:var(--forest-dark); }
+label { display:block; font-weight:600; font-size:13px; margin:0 0 7px; }
+input,select,textarea { font:inherit; width:100%; padding:11px 12px; border:1px solid var(--border); border-radius:8px; background:#fffef9; color:var(--ink); }
+input:focus,select:focus,textarea:focus { outline:2px solid var(--forest); outline-offset:1px; }
+textarea { resize:vertical; min-height:76px; }
+input[type=file]::file-selector-button { font:inherit; padding:7px 12px; margin-right:12px; border:1px solid var(--border); border-radius:6px; background:var(--surface); color:var(--forest-dark); cursor:pointer; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.full { grid-column:1/-1; }
+.actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+button,.button { font:inherit; border:1px solid var(--border); border-radius:8px; padding:10px 16px; cursor:pointer; color:var(--forest-dark); background:var(--forest-tint); font-weight:600; text-decoration:none; transition:background .15s; }
+button.primary,.button.primary { color:white; background:var(--forest); border-color:var(--forest); }
+button.primary:hover { background:var(--forest-dark); }
+button.danger { background:#faeee9; color:var(--err); }
+button:disabled { opacity:.5; cursor:not-allowed; }
+button:hover:not(:disabled) { filter:brightness(.98); }
+button:focus-visible,a:focus-visible { outline:3px solid var(--wheat); outline-offset:3px; }
+.muted,.hint { color:var(--muted); font-size:12px; line-height:1.6; }
+.hint { margin-top:7px; }
+.status { margin-top:12px; line-height:1.6; overflow-wrap:anywhere; }
+.status:empty { margin:0; }
+.status.err { color:var(--err); }
+.status.ok { color:var(--forest); }
+.hidden { display:none!important; }
+.table-wrap { overflow:auto; }
+table { width:100%; min-width:640px; border-collapse:collapse; font-size:13px; }
+th,td { border-bottom:1px solid var(--border); padding:13px 10px; text-align:left; vertical-align:middle; }
+th { background:#f1f4e9; color:var(--forest-dark); white-space:nowrap; }
+th button { padding:0; border:0; background:none; text-align:left; }
+td button { padding:6px 10px; font-size:12px; margin:2px; }
+.badge { display:inline-block; padding:4px 9px; background:var(--wheat-tint); border-radius:12px; font-size:11px; font-weight:700; }
+.consulta { padding:12px; background:var(--forest-tint); border:1px solid var(--border); border-radius:8px; margin-top:8px; }
+.consulta.pendente { background:var(--wheat-tint); }
+.consulta strong,.consulta span { display:block; margin:3px 0; }
+.parcelas { display:grid; grid-template-columns:50px 1fr 1fr auto; gap:8px; align-items:end; margin:10px 0; }
+.parcelas .numero { align-self:center; }
+.search { display:grid; grid-template-columns:2fr 1fr auto auto; gap:12px; align-items:end; }
+.search-actions { display:flex; gap:8px; }
+.pagination { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:16px; }
+.editor { scroll-margin-top:20px; }
+.notice { padding:12px; border-left:3px solid var(--wheat); background:var(--wheat-tint); line-height:1.6; }
+.check-rows { margin-top:14px; }
+.inline { display:inline-block; }
+a { color:var(--forest-dark); }
+.login-wrap { max-width:460px; margin:8vh auto 0; }
+.login-wrap .brand-header { justify-content:center; padding:28px 22px; }
+.login-card h2 { font-size:22px; }
+.login-card .form-field + .form-field { margin-top:18px; }
+.login-card .primary { width:100%; padding:12px; }
+@media(max-width:760px) {
+  body { padding:16px 12px 36px; }
+  .brand-header { padding:22px 20px; gap:15px; border-radius:16px; }
+  .brand-header h1 { font-size:28px; }
+  .logo-mark { width:62px; height:62px; border-radius:14px; }
+  .search { grid-template-columns:1fr 1fr; }
+  .search > div:first-child { grid-column:1/-1; }
+  .search > div:nth-child(2) { grid-column:1/-1; }
+  .nav { gap:5px; }
+  .nav a { padding:9px 10px; font-size:12px; }
+  .nav .logout-btn { width:37px; height:37px; padding:8px; }
+  .card { padding:20px; }
+}
+@media(max-width:500px) {
+  .grid { grid-template-columns:1fr; }
+  .full { grid-column:auto; }
+  .nav a { flex:1 0 38%; text-align:center; }
+  .nav form { margin-left:auto; }
+  .parcelas { grid-template-columns:28px 1fr; }
+  .parcelas button { grid-column:2; }
+  .pagination { flex-wrap:wrap; }
+  .login-wrap { margin-top:5vh; }
+  .brand-header p { font-size:12px; }
+}
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; animation:none!important; scroll-behavior:auto!important; } }
+input[type=file]{
+    width:100%;
+    padding:10px;
+    border:1px dashed var(--wheat-dark);
+    border-radius:8px;
+    background:var(--wheat-tint);
+    font-size:13px;
+    color:var(--soil);
+  }
+
+  .extract-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:14px;}
+  .extract-label{font-size:13px;color:var(--muted);}
+  .extract-btn{
+    width:52px;height:52px;
+    min-width:52px;
+    border-radius:50%;
+    background:var(--forest);
+    border:none;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    box-shadow:0 2px 8px rgba(47,93,69,.4);
+    transition:background .15s ease, transform .1s ease;
+    padding:0;
+  }
+  .extract-btn:hover{background:var(--forest-dark);transform:translateY(-1px);}
+  .extract-btn:active{transform:translateY(0);}
+  .extract-btn:disabled{background:#b9b2a0;box-shadow:none;cursor:not-allowed;transform:none;}
+  .extract-btn svg{width:22px;height:22px;}
+  .extract-btn .spinner{width:20px;height:20px;margin:0;border-width:2.5px;}
+
+  button.btn-secondary{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    background:var(--forest-tint);
+    color:var(--forest-dark);
+    border:1px solid var(--border);
+    font-size:14px;
+    font-weight:600;
+    font-family:'Inter',sans-serif;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  button.btn-secondary:hover{background:#d9ead9;}
+  .btn-row{display:flex;gap:10px;margin-top:12px;}
+
+  .status{font-size:13px;margin-top:10px;font-weight:500;}
+  .status.ok{color:var(--ok);}
+  .status.err{color:var(--err);}
+
+  .tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:14px;gap:4px;}
+  .tab{
+    padding:8px 16px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--muted);
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+  }
+  .tab.active{color:var(--forest-dark);border-bottom:2px solid var(--wheat);}
+
+  pre{
+    background:#241f16;
+    color:#ecdfc2;
+    padding:14px;
+    border-radius:8px;
+    overflow-x:auto;
+    font-size:12.5px;
+    line-height:1.5;
+    max-height:420px;
+    border:1px solid var(--soil);
+  }
+
+  .field{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f1ead6;font-size:13.5px;}
+  .field:last-child{border-bottom:none;}
+  .field .k{color:var(--muted);}
+  .field .v{font-weight:600;text-align:right;max-width:60%;color:var(--ink);}
+
+  .badge{
+    display:inline-block;
+    background:var(--wheat-tint);
+    color:var(--wheat-dark);
+    font-size:12px;
+    font-weight:700;
+    padding:4px 12px;
+    border-radius:20px;
+    border:1px solid #ecd9a6;
+  }
+
+  .hidden{display:none;}
+  .section-title{
+    font-family:'Fraunces',serif;
+    font-size:14px;font-weight:600;margin:18px 0 6px;
+    color:var(--forest-dark);
+    padding-bottom:4px;
+    border-bottom:2px solid var(--forest-tint);
+  }
+  .spinner{
+    display:inline-block;border:2px solid #fff;border-top-color:transparent;
+    border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  </style>
+</head>
+<body>
+  <div class="background-art" aria-hidden="true">
+    <svg class="sprout" viewBox="0 0 200 280" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M98 270C106 202 110 151 98 60M103 207C35 215 18 157 16 130C72 126 98 154 103 207ZM104 156C165 146 181 89 178 60C126 67 101 101 104 156ZM100 98C53 84 41 39 43 15C89 28 105 62 100 98Z"/>
+      <path d="M20 134L102 204M174 65L105 153M46 20L100 96"/>
+    </svg>
+    <svg class="fields" viewBox="0 0 600 360" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M0 360C125 200 290 190 600 100M0 320C135 167 300 152 600 60M0 280C146 130 320 115 600 20M90 360C215 218 380 217 600 155M190 360C305 264 445 259 600 215M300 360C405 305 510 303 600 275"/>
+    </svg>
+  </div>
+  <main class="wrap{% if tela_login %} login-wrap{% endif %}">
+    <header class="brand-header">
+      <div class="logo-mark"><img src="{{ url_for('static', filename='logo.png') }}" alt="Logo RuralFin" width="76" height="76"></div>
+      <div><h1>RuralFin</h1>{% if not tela_login %}<p>Controle financeiro rural</p>{% endif %}</div>
+    </header>
+    {% if not tela_login %}
+    <nav class="nav" aria-label="Navegação principal">
+      <a href="/" {% if request.path == '/' %}aria-current="page"{% endif %}>Importar nota</a>
+      <a href="/cadastros/pessoas" {% if request.path == '/cadastros/pessoas' %}aria-current="page"{% endif %}>Pessoas</a>
+      <a href="/cadastros/classificacoes" {% if request.path == '/cadastros/classificacoes' %}aria-current="page"{% endif %}>Classificações</a>
+      <a href="/cadastros/contas" {% if request.path == '/cadastros/contas' %}aria-current="page"{% endif %}>Contas</a>
+      {% if login_ativo %}
+      <form method="post" action="/sair">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="logout-btn" type="submit" aria-label="Sair do sistema" title="Sair do sistema">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17v3H4V4h6v3M10 12h10m-4-4 4 4-4 4"/><path d="M4 4 12 2v20l-8-2"/></svg>
+        </button>
+      </form>
+      {% endif %}
+    </nav>
+    {% endif %}
+    {% if tela_login %}
+    <section class="card login-card">
+      <h2>Entrar no sistema</h2>
+      <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <div class="form-field"><label for="usuario">Usuário</label><input id="usuario" name="usuario" autocomplete="username" required></div>
+        <div class="form-field"><label for="senha">Senha</label><input type="password" id="senha" name="senha" autocomplete="current-password" required></div>
+        <div class="actions"><button class="primary">Entrar</button></div>
+        {% if erro %}<p class="status err" role="alert">{{ erro }}</p>{% endif %}
+      </form>
+    </section>
+    {% elif recurso is defined %}
+<section class="card">
+    <h2>{{ titulo }}</h2>
+    <form id="buscarForm" class="search">
+      <div><label for="busca">Buscar por um ou mais termos</label><input id="busca" maxlength="200" placeholder="Nome, documento, descrição ou tipo"></div>
+      <div><label for="situacao">Situação</label><select id="situacao"><option value="ATIVO">Ativos</option><option value="INATIVO">Inativos</option><option value="TODOS">Ativos e inativos</option></select></div>
+      <button class="primary" type="submit">Buscar</button>
+      <button type="button" id="todosBtn">Todos os ativos</button>
+    </form>
+    <div id="cadastroStatus" class="status" role="status" aria-live="polite"></div>
+  </section>
+  <section class="card">
+    <div class="table-wrap"><table id="tabela"><thead id="cabecalho"></thead><tbody id="registros"></tbody></table></div>
+    <div class="pagination"><span id="contador" class="hint">Nenhum registro carregado.</span><div><button id="anteriorBtn" disabled>Anterior</button> <button id="proximaBtn" disabled>Próxima</button></div></div>
+    <div class="actions"><button id="novoBtn" class="primary">+ Novo registro</button></div>
+  </section>
+  {% if recurso == 'contas' %}
+    <!-- Mesmo editor para notas extraídas, criação manual e edição de contas. -->
+{{ editor_nota() }}
 
   {% else %}
     <section class="card editor hidden" id="cadastroEditor"><h2 id="cadastroTitulo">Novo registro</h2>
@@ -96,9 +347,66 @@
       </div><p class="hint">Novos cadastros ficam ativos automaticamente.</p><div class="actions"><button class="primary" id="salvarCadastro">Salvar</button><button type="button" id="cancelarCadastro">Cancelar</button></div></form>
     </section>
   {% endif %}
-</main>
-{% if recurso == 'contas' %}<script>
-// Revisão, consulta e lançamento; preserva o formato JSON da primeira etapa.
+    {% else %}
+<!-- Chave de API -->
+  <div class="card">
+    <h2>Importar nota</h2>
+    <label for="apiKey">Chave de API do Gemini</label>
+    <input type="password" id="apiKey" placeholder="Cole sua API Key aqui" />
+    <div class="hint">
+      Obtenha sua chave em
+      <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com/app/apikey</a>.
+      A chave digitada é usada nesta extração e não é gravada no banco. Se houver uma chave configurada no servidor, pode deixar este campo vazio.
+    </div>
+  </div>
+
+  <!-- Upload -->
+  <div class="card">
+    <label for="pdfFile">Selecione o arquivo PDF da nota fiscal</label>
+    <input type="file" id="pdfFile" accept="application/pdf" />
+    <div class="hint">Envie um PDF de até {{ pdf_max_mb }} MB.</div>
+    <div id="fileInfo" class="hint"></div>
+
+    <div class="extract-row">
+      <span class="extract-label" id="extractLabel">Selecione um PDF para habilitar a extração</span>
+      <button id="extractBtn" class="extract-btn" disabled title="Extrair Dados">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <div id="status" class="status"></div>
+  </div>
+
+  <!-- Resultado -->
+  <div class="card accent-wheat hidden" id="resultCard">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <strong>Dados Extraídos</strong>
+      <span class="badge" id="classificacaoBadge"></span>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="formatted">Visualização Formatada</div>
+      <div class="tab" data-tab="json">JSON</div>
+    </div>
+
+    <div id="tab-formatted"></div>
+    <pre id="tab-json" class="hidden"></pre>
+
+    <div class="btn-row">
+      <button class="btn-secondary" id="downloadJson">Baixar .JSON</button>
+      <button class="btn-secondary" id="downloadTxt">Baixar .TXT</button>
+    </div>
+  </div>
+
+  <!-- Mesmo editor para notas extraídas, criação manual e edição de contas. -->
+{{ editor_nota() }}
+    {% endif %}
+  </main>
+  {% if not tela_login %}
+    {% if recurso is not defined or recurso == 'contas' %}
+<script>
+// Revisão, consulta e lançamento; aceita também o JSON antigo da primeira etapa.
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 async function api(url, options = {}) {
   const headers = {...options.headers, 'X-CSRF-Token': csrfToken};
@@ -163,7 +471,7 @@ function abrirNota(dados = {}, arquivo = null, id = null) {
   $('notaFantasia').value = dados.fornecedor?.fantasia || '';
   $('notaCnpj').value = dados.fornecedor?.cnpj || '';
   $('notaNome').value = dados.faturado?.nomeCompleto || '';
-  $('notaCpf').value = dados.faturado?.cpf || '';
+  $('notaCpfCnpj').value = dados.faturado?.cpfCnpj || dados.faturado?.cpf || dados.faturado?.cnpj || '';
   $('notaCategorias').value = (dados.classificacoes || [dados.classificacaoDespesa || '']).join('\n');
   $('notaParcelas').replaceChildren();
   const parcelas = dados.parcelas?.length ? dados.parcelas : [{valor: dados.valorTotal ?? ''}];
@@ -177,7 +485,7 @@ function obterNota() {
     tipo: $('notaTipo').value, numeroNotaFiscal: $('notaNumero').value, dataEmissao: $('notaEmissao').value,
     valorTotal: $('notaTotal').value, descricaoProdutos: $('notaDescricao').value,
     fornecedor: {razaoSocial: $('notaRazao').value, fantasia: $('notaFantasia').value, cnpj: $('notaCnpj').value},
-    faturado: {nomeCompleto: $('notaNome').value, cpf: $('notaCpf').value},
+    faturado: {nomeCompleto: $('notaNome').value, cpfCnpj: $('notaCpfCnpj').value},
     classificacoes: $('notaCategorias').value.split('\n').map(s=>s.trim()).filter(Boolean),
     parcelas: [...$('notaParcelas').children].map((linha, i)=>({numero:i+1,
       dataVencimento:linha.querySelector('input[type=date]').value, valor:linha.querySelector('input[type=number]').value})),
@@ -240,7 +548,9 @@ $('lancarBtn').addEventListener('click', async()=>{
   finally{$('lancarBtn').disabled=false;$('analisarBtn').disabled=false;}
 });
 
-</script>{% endif %}
+</script>
+    {% endif %}
+    {% if recurso is defined %}
 <script>window.recursoCadastro = {{ recurso | tojson }};</script>
 <script>
 // Tabelas iniciam vazias; busca, ordenação e paginação são feitas no PostgreSQL.
@@ -344,482 +654,7 @@ window.addEventListener('contaSalva',()=>{if(buscaRealizada)carregarTabela();});
 cabecalhoTabela();
 
 </script>
-</body></html>
-
-{% else %}
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="csrf-token" content="{{ csrf_token }}" />
-<style>
-:root{--bg:#f7f3e8;--surface:#fffdf6;--ink:#2a2519;--muted:#7a6f5c;--border:#e6dcc2;--forest:#2f5d45;--forest-dark:#1f4433;--forest-tint:#e7f0e9;--wheat:#c9932f;--wheat-tint:#f7ecd3;--err:#a8422f}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;padding:0 16px 48px}.wrap{max-width:1100px;margin:auto}.marca{background:linear-gradient(135deg, var(--forest) 0%, var(--forest-dark) 100%);padding:24px;color:#fffdf6;border-radius:0 0 16px 16px;margin-bottom:22px}.marca h1{font-family:Fraunces,Georgia,serif;margin:0;font-size:28px}.marca p{color:#d9e6dd;margin:6px 0 0}.nav{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.nav a{padding:9px 13px;border:1px solid var(--border);border-radius:7px;text-decoration:none;color:var(--forest-dark);background:var(--surface);font-weight:600}.nav a[aria-current=page]{background:var(--forest);color:white}.nav form{margin-left:auto}.card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--forest);border-radius:10px;padding:20px;margin-bottom:16px}h2{font-family:Fraunces,Georgia,serif;font-size:21px;margin:0 0 16px}h3{font-size:15px;margin:18px 0 10px}label{display:block;font-weight:600;font-size:13px;margin:0 0 6px}input,select,textarea{font:inherit;width:100%;padding:10px;border:1px solid var(--border);border-radius:7px;background:#fffef9;color:var(--ink)}input:focus,select:focus,textarea:focus{outline:2px solid var(--forest);outline-offset:1px}textarea{resize:vertical;min-height:70px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}button,.button{font:inherit;border:1px solid var(--border);border-radius:7px;padding:10px 16px;cursor:pointer;color:var(--forest-dark);background:var(--forest-tint);font-weight:600;text-decoration:none}button.primary,.button.primary{color:white;background:var(--forest);border-color:var(--forest)}button.danger{background:#faeee9;color:var(--err)}button:disabled{opacity:.5;cursor:not-allowed}button:hover:not(:disabled){filter:brightness(.96)}.muted,.hint{color:var(--muted);font-size:12px;line-height:1.6}.status{margin-top:12px;line-height:1.6}.status.err{color:var(--err)}.status.ok{color:var(--forest)}.hidden{display:none!important}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid var(--border);padding:12px 10px;text-align:left;vertical-align:middle}th button{padding:0;border:0;background:none;text-align:left}td button{padding:6px 10px;font-size:12px;margin:2px}.badge{display:inline-block;padding:4px 9px;background:var(--wheat-tint);border-radius:12px;font-size:11px;font-weight:700}.consulta{padding:12px;background:var(--forest-tint);border:1px solid var(--border);border-radius:7px;margin-top:8px}.consulta.pendente{background:var(--wheat-tint)}.consulta strong,.consulta span{display:block;margin:3px 0}.parcelas{display:grid;grid-template-columns:50px 1fr 1fr auto;gap:8px;align-items:end;margin:10px 0}.parcelas .numero{align-self:center}.search{display:grid;grid-template-columns:2fr 1fr auto auto;gap:10px;align-items:end}.search-actions{display:flex;gap:8px}.pagination{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px}.editor{scroll-margin-top:20px}.notice{padding:12px;border-left:3px solid var(--wheat);background:var(--wheat-tint);line-height:1.6}.check-rows{margin-top:14px}.inline{display:inline-block}a{color:var(--forest-dark)}@media(max-width:650px){.grid,.search{grid-template-columns:1fr}.full{grid-column:auto}.parcelas{grid-template-columns:30px 1fr}.parcelas button{grid-column:2}.nav form{margin-left:0}.pagination{flex-wrap:wrap}.card{padding:15px}}
-
-</style>
-<title>RuralFin - Extração de Dados de Nota Fiscal</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌾</text></svg>" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg:#f7f3e8;              /* papel/campo claro */
-    --surface:#fffdf6;
-    --ink:#2a2519;             /* tinta escura quente */
-    --muted:#7a6f5c;
-    --border:#e6dcc2;
-
-    --forest:#2f5d45;          /* verde pasto */
-    --forest-dark:#1f4433;
-    --forest-tint:#e7f0e9;
-
-    --wheat:#c9932f;           /* dourado trigo */
-    --wheat-dark:#9c7222;
-    --wheat-tint:#f7ecd3;
-
-    --soil:#7a5230;            /* marrom terra */
-    --ok:#2f5d45;
-    --err:#a8422f;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:'Inter',-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    background:
-      radial-gradient(ellipse at top left, rgba(201,147,47,.07), transparent 55%),
-      var(--bg);
-    color:var(--ink);
-    padding:0 16px 48px;
-  }
-  .container{max-width:760px;margin:0 auto;}
-
-  /* Cabeçalho / marca */
-  .header-band{
-    background:linear-gradient(135deg, var(--forest) 0%, var(--forest-dark) 100%);
-    margin:0 -16px 24px;
-    padding:28px 16px 24px;
-    border-radius:0 0 18px 18px;
-  }
-  .header-inner{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px;}
-  .logo-mark{
-    width:46px;height:46px;min-width:46px;
-    border-radius:12px;
-    background:var(--wheat);
-    display:flex;align-items:center;justify-content:center;
-    box-shadow:inset 0 0 0 2px rgba(255,255,255,.25);
-  }
-  .logo-mark svg{width:26px;height:26px;}
-  h1{
-    font-family:'Fraunces',serif;
-    font-weight:600;
-    font-size:26px;
-    margin:0;
-    color:#fdfaf1;
-    letter-spacing:.01em;
-  }
-  .subtitle{
-    color:#d9e6dd;
-    font-size:13.5px;
-    margin:2px 0 0;
-  }
-
-  .card{
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-top:3px solid var(--forest);
-    border-radius:10px;
-    padding:20px;
-    margin-bottom:16px;
-    box-shadow:0 1px 2px rgba(42,37,25,.04);
-  }
-  .card.accent-wheat{border-top-color:var(--wheat);}
-
-  label{font-family:'Fraunces',serif;font-size:14.5px;font-weight:600;display:block;margin-bottom:6px;color:var(--ink);}
-  .hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5;}
-  .hint a{color:var(--forest);font-weight:600;}
-
-  input[type=password], input[type=text]{
-    width:100%;
-    padding:10px 12px;
-    border:1px solid var(--border);
-    border-radius:8px;
-    font-size:14px;
-    background:#fffef9;
-    color:var(--ink);
-    font-family:'Inter',sans-serif;
-  }
-  input[type=password]:focus, input[type=text]:focus{
-    outline:none;border-color:var(--forest);box-shadow:0 0 0 3px var(--forest-tint);
-  }
-  input[type=file]{
-    width:100%;
-    padding:10px;
-    border:1px dashed var(--wheat-dark);
-    border-radius:8px;
-    background:var(--wheat-tint);
-    font-size:13px;
-    color:var(--soil);
-  }
-
-  .extract-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:14px;}
-  .extract-label{font-size:13px;color:var(--muted);}
-  .extract-btn{
-    width:52px;height:52px;
-    min-width:52px;
-    border-radius:50%;
-    background:var(--forest);
-    border:none;
-    display:flex;align-items:center;justify-content:center;
-    cursor:pointer;
-    box-shadow:0 2px 8px rgba(47,93,69,.4);
-    transition:background .15s ease, transform .1s ease;
-    padding:0;
-  }
-  .extract-btn:hover{background:var(--forest-dark);transform:translateY(-1px);}
-  .extract-btn:active{transform:translateY(0);}
-  .extract-btn:disabled{background:#b9b2a0;box-shadow:none;cursor:not-allowed;transform:none;}
-  .extract-btn svg{width:22px;height:22px;}
-  .extract-btn .spinner{width:20px;height:20px;margin:0;border-width:2.5px;}
-
-  button.btn-secondary{
-    width:100%;
-    padding:12px;
-    border-radius:8px;
-    background:var(--forest-tint);
-    color:var(--forest-dark);
-    border:1px solid var(--border);
-    font-size:14px;
-    font-weight:600;
-    font-family:'Inter',sans-serif;
-    cursor:pointer;
-    transition:background .15s ease;
-  }
-  button.btn-secondary:hover{background:#d9ead9;}
-  .btn-row{display:flex;gap:10px;margin-top:12px;}
-
-  .status{font-size:13px;margin-top:10px;font-weight:500;}
-  .status.ok{color:var(--ok);}
-  .status.err{color:var(--err);}
-
-  .tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:14px;gap:4px;}
-  .tab{
-    padding:8px 16px;
-    font-size:13px;
-    font-weight:600;
-    color:var(--muted);
-    cursor:pointer;
-    border-bottom:2px solid transparent;
-  }
-  .tab.active{color:var(--forest-dark);border-bottom:2px solid var(--wheat);}
-
-  pre{
-    background:#241f16;
-    color:#ecdfc2;
-    padding:14px;
-    border-radius:8px;
-    overflow-x:auto;
-    font-size:12.5px;
-    line-height:1.5;
-    max-height:420px;
-    border:1px solid var(--soil);
-  }
-
-  .field{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #f1ead6;font-size:13.5px;}
-  .field:last-child{border-bottom:none;}
-  .field .k{color:var(--muted);}
-  .field .v{font-weight:600;text-align:right;max-width:60%;color:var(--ink);}
-
-  .badge{
-    display:inline-block;
-    background:var(--wheat-tint);
-    color:var(--wheat-dark);
-    font-size:12px;
-    font-weight:700;
-    padding:4px 12px;
-    border-radius:20px;
-    border:1px solid #ecd9a6;
-  }
-
-  .hidden{display:none;}
-  .section-title{
-    font-family:'Fraunces',serif;
-    font-size:14px;font-weight:600;margin:18px 0 6px;
-    color:var(--forest-dark);
-    padding-bottom:4px;
-    border-bottom:2px solid var(--forest-tint);
-  }
-  .spinner{
-    display:inline-block;border:2px solid #fff;border-top-color:transparent;
-    border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;
-  }
-  @keyframes spin{to{transform:rotate(360deg);}}
-</style>
-</head>
-<body>
-<div class="container">
-
-  <div class="header-band">
-    <div class="header-inner">
-      <div class="logo-mark">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2C12 2 8 6 8 11C8 14.3137 9.79086 16 12 16C14.2091 16 16 14.3137 16 11C16 6 12 2 12 2Z" fill="#1f4433"/>
-          <path d="M12 16V22" stroke="#1f4433" stroke-width="1.6" stroke-linecap="round"/>
-          <path d="M12 19C12 19 9 19.3 8 21" stroke="#1f4433" stroke-width="1.4" stroke-linecap="round"/>
-          <path d="M12 19C12 19 15 19.3 16 21" stroke="#1f4433" stroke-width="1.4" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div>
-        <h1>RuralFin</h1>
-        <p class="subtitle">Extração inteligente de dados de nota fiscal</p>
-      </div>
-    </div>
-  </div>
-
-  <nav class="nav" aria-label="Navegação principal">
-  <a href="/" {% if request.path == '/' %}aria-current="page"{% endif %}>Importar nota</a>
-  <a href="/cadastros/pessoas" {% if request.path == '/cadastros/pessoas' %}aria-current="page"{% endif %}>Pessoas</a>
-  <a href="/cadastros/classificacoes" {% if request.path == '/cadastros/classificacoes' %}aria-current="page"{% endif %}>Classificações</a>
-  <a href="/cadastros/contas" {% if request.path == '/cadastros/contas' %}aria-current="page"{% endif %}>Contas</a>
-  {% if login_ativo %}<form method="post" action="/sair"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button type="submit">Sair</button></form>{% endif %}
-</nav>
-
-  <!-- Chave de API -->
-  <div class="card">
-    <label for="apiKey">Chave de API do Gemini</label>
-    <input type="password" id="apiKey" placeholder="Cole sua API Key aqui" />
-    <div class="hint">
-      Obtenha sua chave em
-      <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com/app/apikey</a>.
-      A chave digitada é usada nesta extração e não é gravada no banco. Se houver uma chave configurada no servidor, pode deixar este campo vazio.
-    </div>
-  </div>
-
-  <!-- Upload -->
-  <div class="card">
-    <label for="pdfFile">Selecione o arquivo PDF da nota fiscal</label>
-    <input type="file" id="pdfFile" accept="application/pdf" />
-    <div class="hint">Envie um PDF de até {{ pdf_max_mb }} MB.</div>
-    <div id="fileInfo" class="hint"></div>
-
-    <div class="extract-row">
-      <span class="extract-label" id="extractLabel">Selecione um PDF para habilitar a extração</span>
-      <button id="extractBtn" class="extract-btn" disabled title="Extrair Dados">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-    </div>
-    <div id="status" class="status"></div>
-  </div>
-
-  <!-- Resultado -->
-  <div class="card accent-wheat hidden" id="resultCard">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-      <strong>Dados Extraídos</strong>
-      <span class="badge" id="classificacaoBadge"></span>
-    </div>
-
-    <div class="tabs">
-      <div class="tab active" data-tab="formatted">Visualização Formatada</div>
-      <div class="tab" data-tab="json">JSON</div>
-    </div>
-
-    <div id="tab-formatted"></div>
-    <pre id="tab-json" class="hidden"></pre>
-
-    <div class="btn-row">
-      <button class="btn-secondary" id="downloadJson">Baixar .JSON</button>
-      <button class="btn-secondary" id="downloadTxt">Baixar .TXT</button>
-    </div>
-  </div>
-
-  <!-- Mesmo editor para notas extraídas, criação manual e edição de contas. -->
-<section class="card editor hidden" id="notaEditor" aria-labelledby="editorTitulo">
-  <h2 id="editorTitulo">Revisar dados da nota</h2>
-  <p class="hint">Confira os dados antes de lançar. Se o PDF não informar um campo, preencha-o aqui.</p>
-  <form id="notaForm">
-    <div class="grid">
-      <div><label for="notaTipo">Tipo da conta</label><select id="notaTipo"><option value="APAGAR">A pagar (despesa)</option><option value="ARECEBER">A receber (receita)</option></select></div>
-      <div><label for="notaNumero">Número da nota / documento</label><input id="notaNumero" maxlength="60" required></div>
-      <div><label for="notaEmissao">Data de emissão</label><input type="date" id="notaEmissao" required></div>
-      <div><label for="notaTotal">Valor total (R$)</label><input type="number" id="notaTotal" min="0.01" step="0.01" required></div>
-      <div class="full"><label for="notaDescricao">Descrição dos produtos / serviços</label><textarea id="notaDescricao" maxlength="10000"></textarea></div>
-    </div>
-    <h3 id="pessoaTitulo">Fornecedor</h3>
-    <div class="grid">
-      <div><label for="notaRazao">Nome / razão social</label><input id="notaRazao" maxlength="200" required></div>
-      <div><label for="notaFantasia">Nome fantasia</label><input id="notaFantasia" maxlength="200"></div>
-      <div class="full"><label for="notaCnpj">CPF/CNPJ do fornecedor ou cliente</label><input id="notaCnpj" maxlength="18" required></div>
-    </div>
-    <h3>Faturado</h3>
-    <div class="grid">
-      <div><label for="notaNome">Nome completo</label><input id="notaNome" maxlength="200" required></div>
-      <div><label for="notaCpf">CPF</label><input id="notaCpf" maxlength="14" required></div>
-    </div>
-    <h3>Classificações</h3>
-    <label for="notaCategorias">Uma classificação por linha</label>
-    <textarea id="notaCategorias" required placeholder="MANUTENÇÃO E OPERAÇÃO"></textarea>
-    <h3>Parcelas</h3>
-    <div id="notaParcelas"></div>
-    <button type="button" id="adicionarParcela">+ Adicionar parcela</button>
-    <div class="actions">
-      <button class="primary" type="submit" id="analisarBtn">Consultar no banco</button>
-      <button type="button" id="cancelarNota">Cancelar</button>
-    </div>
-  </form>
-  <div id="consultaResultado" class="check-rows hidden" aria-live="polite"></div>
-  <div class="actions hidden" id="lancarActions"><button class="primary" type="button" id="lancarBtn">Confirmar e lançar conta</button></div>
-  <div id="notaStatus" class="status" role="status" aria-live="polite"></div>
-</section>
-
-</div>
-
-<script>
-// Revisão, consulta e lançamento; preserva o formato JSON da primeira etapa.
-const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-async function api(url, options = {}) {
-  const headers = {...options.headers, 'X-CSRF-Token': csrfToken};
-  if (options.body && !(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
-  const resposta = await fetch(url, {...options, headers});
-  const dados = await resposta.json();
-  if (!resposta.ok) throw new Error(dados.error || 'Não foi possível concluir a operação.');
-  return dados;
-}
-const $ = id => document.getElementById(id);
-const notaEditor = $('notaEditor');
-let arquivoNota = null;
-let contaEditando = null;
-let origemNota = 'manual';
-let notaConsultada = null;
-function notaStatus(mensagem, tipo = '') {
-  $('notaStatus').textContent = mensagem;
-  $('notaStatus').className = 'status ' + tipo;
-}
-function invalidarConsulta() {
-  notaConsultada = null;
-  $('consultaResultado').classList.add('hidden');
-  $('lancarActions').classList.add('hidden');
-}
-function isoData(valor) {
-  if (!valor) return '';
-  const partes = String(valor).split('/');
-  return partes.length === 3 ? `${partes[2]}-${partes[1]}-${partes[0]}` : String(valor).slice(0,10);
-}
-function adicionarParcela(parcela = {}) {
-  const linha = document.createElement('div');
-  linha.className = 'parcelas';
-  const numero = document.createElement('span'); numero.className = 'numero';
-  const vencimento = document.createElement('input'); vencimento.type = 'date'; vencimento.required = true;
-  vencimento.value = isoData(parcela.dataVencimento);
-  const valor = document.createElement('input'); valor.type = 'number'; valor.min = '0.01'; valor.step = '0.01'; valor.required = true;
-  valor.value = parcela.valor ?? '';
-  const remover = document.createElement('button'); remover.type = 'button'; remover.textContent = 'Remover';
-  remover.addEventListener('click', () => {linha.remove(); renumerarParcelas(); invalidarConsulta();});
-  linha.append(numero, vencimento, valor, remover);
-  $('notaParcelas').append(linha);
-  renumerarParcelas();
-}
-function renumerarParcelas() {
-  [...$('notaParcelas').children].forEach((linha, i) => {
-    linha.querySelector('.numero').textContent = i+1;
-    linha.querySelector('input[type=date]').setAttribute('aria-label', `Vencimento da parcela ${i+1}`);
-    linha.querySelector('input[type=number]').setAttribute('aria-label', `Valor da parcela ${i+1} em reais`);
-  });
-}
-function abrirNota(dados = {}, arquivo = null, id = null) {
-  arquivoNota = arquivo; contaEditando = id; origemNota = arquivo ? 'extracao' : 'manual';
-  invalidarConsulta(); notaStatus('');
-  $('editorTitulo').textContent = id ? `Editar conta #${id}` : 'Revisar dados da nota';
-  $('lancarBtn').textContent = id ? 'Salvar alterações da conta' : 'Confirmar e lançar conta';
-  $('notaTipo').value = dados.tipo || 'APAGAR';
-  $('notaNumero').value = dados.numeroNotaFiscal || dados.numero_nota_fiscal || '';
-  $('notaEmissao').value = isoData(dados.dataEmissao || dados.data_emissao);
-  $('notaTotal').value = dados.valorTotal ?? dados.valor_total ?? '';
-  $('notaDescricao').value = dados.descricaoProdutos || dados.descricao_produtos || '';
-  $('notaRazao').value = dados.fornecedor?.razaoSocial || '';
-  $('notaFantasia').value = dados.fornecedor?.fantasia || '';
-  $('notaCnpj').value = dados.fornecedor?.cnpj || '';
-  $('notaNome').value = dados.faturado?.nomeCompleto || '';
-  $('notaCpf').value = dados.faturado?.cpf || '';
-  $('notaCategorias').value = (dados.classificacoes || [dados.classificacaoDespesa || '']).join('\n');
-  $('notaParcelas').replaceChildren();
-  const parcelas = dados.parcelas?.length ? dados.parcelas : [{valor: dados.valorTotal ?? ''}];
-  parcelas.forEach(adicionarParcela);
-  atualizarTipo();
-  notaEditor.classList.remove('hidden');
-  notaEditor.scrollIntoView({behavior:'smooth', block:'start'});
-}
-function obterNota() {
-  return {
-    tipo: $('notaTipo').value, numeroNotaFiscal: $('notaNumero').value, dataEmissao: $('notaEmissao').value,
-    valorTotal: $('notaTotal').value, descricaoProdutos: $('notaDescricao').value,
-    fornecedor: {razaoSocial: $('notaRazao').value, fantasia: $('notaFantasia').value, cnpj: $('notaCnpj').value},
-    faturado: {nomeCompleto: $('notaNome').value, cpf: $('notaCpf').value},
-    classificacoes: $('notaCategorias').value.split('\n').map(s=>s.trim()).filter(Boolean),
-    parcelas: [...$('notaParcelas').children].map((linha, i)=>({numero:i+1,
-      dataVencimento:linha.querySelector('input[type=date]').value, valor:linha.querySelector('input[type=number]').value})),
-  };
-}
-function atualizarTipo() { $('pessoaTitulo').textContent = $('notaTipo').value === 'APAGAR' ? 'Fornecedor' : 'Cliente'; }
-$('notaTipo').addEventListener('change', atualizarTipo);
-$('notaForm').addEventListener('input', invalidarConsulta);
-$('notaForm').addEventListener('change', invalidarConsulta);
-$('adicionarParcela').addEventListener('click', ()=>{adicionarParcela();invalidarConsulta();});
-$('cancelarNota').addEventListener('click', ()=>{notaEditor.classList.add('hidden');invalidarConsulta();});
-function mostrarConsulta(titulo, registro) {
-  const bloco = document.createElement('div'); bloco.className = 'consulta' + (registro.existe && registro.status === 'ATIVO' ? '' : ' pendente');
-  const cabecalho = document.createElement('strong'); cabecalho.textContent = titulo;
-  const nome = document.createElement('span'); nome.textContent = registro.nome;
-  const doc = document.createElement('span'); doc.textContent = registro.documento || '';
-  const situacao = document.createElement('strong'); situacao.textContent = registro.mensagem;
-  bloco.append(cabecalho,nome,doc,situacao);
-  if(registro.nomeCadastrado && registro.nomeCadastrado !== registro.nome) {
-    const aviso = document.createElement('span'); aviso.textContent = `Nome no cadastro: ${registro.nomeCadastrado}. O cadastro existente será utilizado.`; bloco.append(aviso);
-  }
-  $('consultaResultado').append(bloco);
-}
-$('notaForm').addEventListener('submit', async evento=>{
-  evento.preventDefault(); invalidarConsulta(); const nota = obterNota();
-  $('analisarBtn').disabled = true; notaStatus('Consultando o PostgreSQL...');
-  try {
-    const resultado = await api('/api/analisar', {method:'POST',body:JSON.stringify(nota)});
-    const duplicadaPropria = contaEditando && resultado.duplicada?.id === contaEditando;
-    const inativo = [resultado.fornecedor,resultado.faturado,...resultado.classificacoes].some(r=>r.status==='INATIVO');
-    $('consultaResultado').replaceChildren();
-    mostrarConsulta(nota.tipo==='APAGAR'?'FORNECEDOR':'CLIENTE', resultado.fornecedor);
-    mostrarConsulta('FATURADO', resultado.faturado);
-    resultado.classificacoes.forEach(r=>mostrarConsulta(nota.tipo==='APAGAR'?'DESPESA':'RECEITA',r));
-    $('consultaResultado').classList.remove('hidden');
-    // Uma resposta de uma consulta antiga não autoriza salvar dados já alterados.
-    if (JSON.stringify(nota) !== JSON.stringify(obterNota())) {invalidarConsulta();notaStatus('Dados alterados. Consulte novamente.');return;}
-    if (resultado.podeLancar || (duplicadaPropria && !inativo)) {
-      notaConsultada = JSON.stringify(nota); $('lancarActions').classList.remove('hidden');
-      notaStatus(duplicadaPropria?'Dados conferidos. Confirme as alterações.':resultado.orientacao);
-    } else notaStatus(resultado.orientacao,'err');
-  } catch(erro) {notaStatus(erro.message,'err');}
-  finally {$('analisarBtn').disabled=false;}
-});
-$('lancarBtn').addEventListener('click', async()=>{
-  const nota = obterNota();
-  if(notaConsultada !== JSON.stringify(nota)) {invalidarConsulta();notaStatus('Consulte novamente antes de confirmar.','err');return;}
-  $('lancarBtn').disabled=true; $('analisarBtn').disabled=true; notaStatus('Gravando conta e parcelas...');
-  try {
-    let resultado;
-    if(contaEditando) resultado=await api(`/api/cadastros/contas/${contaEditando}`,{method:'PUT',body:JSON.stringify(nota)});
-    else {
-      const form = new FormData(); form.append('dados', JSON.stringify(nota)); form.append('origem', origemNota);
-      if(arquivoNota) form.append('pdf', arquivoNota);
-      resultado=await api('/api/lancar',{method:'POST',body:form});
-    }
-    invalidarConsulta(); notaStatus(`${resultado.mensagem} Conta #${resultado.id}.`,'ok');
-    window.dispatchEvent(new CustomEvent('contaSalva',{detail:resultado}));
-  } catch(erro){notaStatus(erro.message,'err');}
-  finally{$('lancarBtn').disabled=false;$('analisarBtn').disabled=false;}
-});
-
-</script>
+    {% else %}
 <script>
 let selectedFile = null;
 let extractedData = null;
@@ -917,8 +752,8 @@ function renderFormatted(d) {
     <div class="field"><span class="k">CNPJ</span><span class="v">${fornecedor.cnpj || "-"}</span></div>
 
     <div class="section-title">Faturado</div>
-    <div class="field"><span class="k">Nome Completo</span><span class="v">${faturado.nomeCompleto || "-"}</span></div>
-    <div class="field"><span class="k">CPF</span><span class="v">${faturado.cpf || "-"}</span></div>
+    <div class="field"><span class="k">Nome / razão social</span><span class="v">${faturado.nomeCompleto || "-"}</span></div>
+    <div class="field"><span class="k">CPF/CNPJ</span><span class="v">${faturado.cpfCnpj || faturado.cpf || faturado.cnpj || "-"}</span></div>
 
     <div class="section-title">Produtos</div>
     <div class="field"><span class="v" style="text-align:left;max-width:100%;">${d.descricaoProdutos || "-"}</span></div>
@@ -958,8 +793,8 @@ function buildTxt(d) {
   lines.push(`  CNPJ: ${fornecedor.cnpj || "-"}`);
   lines.push("");
   lines.push("FATURADO");
-  lines.push(`  Nome Completo: ${faturado.nomeCompleto || "-"}`);
-  lines.push(`  CPF: ${faturado.cpf || "-"}`);
+  lines.push(`  Nome / razão social: ${faturado.nomeCompleto || "-"}`);
+  lines.push(`  CPF/CNPJ: ${faturado.cpfCnpj || faturado.cpf || faturado.cnpj || "-"}`);
   lines.push("");
   lines.push("PRODUTOS");
   lines.push(`  ${d.descricaoProdutos || "-"}`);
@@ -1034,7 +869,7 @@ document.getElementById("downloadTxt").addEventListener("click", () => {
   downloadFile(buildTxt(extractedData), "nota-fiscal.txt", "text/plain");
 });
 </script>
+    {% endif %}
+  {% endif %}
 </body>
 </html>
-
-{% endif %}

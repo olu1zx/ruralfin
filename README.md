@@ -21,7 +21,7 @@ acesso; para extração de PDFs, informe sua chave do Gemini na interface.
 
 1. Recebe o PDF e mantém a extração de dados pelo Gemini da primeira etapa.
 2. Apresenta o JSON e um formulário para conferir ou corrigir os dados extraídos.
-3. Consulta fornecedor/cliente pelo CPF/CNPJ, faturado pelo CPF e classificação
+3. Consulta fornecedor/cliente e faturado pelo CPF/CNPJ e classificação
    pelo tipo e descrição. Mostra **EXISTE - ID** ou **NÃO EXISTE**.
 4. Após a confirmação, cria os cadastros inexistentes e grava conta,
    classificações, parcelas e PDF em uma única transação.
@@ -46,6 +46,8 @@ o filtro **Inativos** permite encontrar e reativar registros.
   acentos e espaços na classificação não criam duplicatas.
 - Os exemplos acadêmicos usam documentos fictícios; o sistema verifica formato
   e tamanho de CPF/CNPJ, sem exigir dígitos verificadores reais.
+- O faturado pode ser pessoa física ou jurídica. A extração usa `faturado.cpfCnpj`
+  para o documento do destinatário; o JSON antigo com `faturado.cpf` continua aceito.
 - Nota duplicada é detectada pela combinação tipo + pessoa + número da nota.
   O mesmo PDF também não pode gerar duas contas, mesmo com números diferentes.
 - Se ocorrer falha ou duplicata, toda a transação é desfeita.
@@ -125,6 +127,7 @@ erDiagram
 |---|---|
 | app.py | Backend completo: Gemini, PostgreSQL, validações, login, cadastros e contas |
 | templates/index.html | Todas as telas, estilos e JavaScript em um único HTML |
+| static/logo.png | Logo do sistema, compartilhada por todas as telas |
 | banco.sql | Tabelas, chaves, índices e bloqueio de exclusão física |
 | requirements.txt | Bibliotecas Python utilizadas |
 | iniciar.ps1 | Inicia o sistema local no Windows |

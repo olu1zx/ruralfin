@@ -65,12 +65,12 @@ def chave_descricao(valor):
     return ''.join(c for c in normalizado if not unicodedata.combining(c)).upper()
 
 
-def documento(valor, campo, cpf=False):
+def documento(valor, campo):
     if not isinstance(valor, str) or re.search(r'[^0-9./\-\s]', valor):
         raise ErroValidacao(f'{campo}: informe somente dígitos ou a máscara de CPF/CNPJ.')
     digitos = re.sub(r'\D', '', valor)
-    if len(digitos) not in ([11] if cpf else [11, 14]):
-        raise ErroValidacao(f'{campo}: informe {"11 dígitos" if cpf else "11 ou 14 dígitos"}.')
+    if len(digitos) not in (11, 14):
+        raise ErroValidacao(f'{campo}: informe 11 ou 14 dígitos.')
     # Aceita os documentos fictícios dos exemplos acadêmicos (sem validar dígito verificador).
     return digitos
 
@@ -151,8 +151,10 @@ def validar_nota(dados):
         'fornecedor': {'razaoSocial': texto(fornecedor.get('razaoSocial', ''), 'Razão social'),
                        'fantasia': texto(fornecedor.get('fantasia', ''), 'Nome fantasia', obrigatorio=False),
                        'cnpj': documento(fornecedor.get('cnpj', ''), 'CPF/CNPJ do fornecedor ou cliente')},
-        'faturado': {'nomeCompleto': texto(faturado.get('nomeCompleto', ''), 'Nome do faturado'),
-                     'cpf': documento(faturado.get('cpf', ''), 'CPF do faturado', cpf=True)},
+        # Aceita também o JSON antigo, que utilizava somente a chave "cpf".
+        'faturado': {'nomeCompleto': texto(faturado.get('nomeCompleto', ''), 'Nome / razão social do faturado'),
+                     'cpfCnpj': documento(faturado.get('cpfCnpj', faturado.get('cpf') or faturado.get('cnpj', '')),
+                                          'CPF/CNPJ do faturado')},
         'classificacoes': classificacoes, 'parcelas': resultado_parcelas,
     }
 
@@ -230,10 +232,10 @@ def analisar():
     nota = validar_nota(request.get_json(silent=True))
     with conectar() as conn:
         f = procurar_pessoa(conn, 'CLIENTE-FORNECEDOR', nota['fornecedor']['cnpj'])
-        r = procurar_pessoa(conn, 'FATURADO', nota['faturado']['cpf'])
+        r = procurar_pessoa(conn, 'FATURADO', nota['faturado']['cpfCnpj'])
         categorias = [resultado_consulta(procurar_classificacao(conn, c), c['descricao']) for c in nota['classificacoes']]
         fornecedor = resultado_consulta(f, nota['fornecedor']['razaoSocial'], nota['fornecedor']['cnpj'])
-        faturado = resultado_consulta(r, nota['faturado']['nomeCompleto'], nota['faturado']['cpf'])
+        faturado = resultado_consulta(r, nota['faturado']['nomeCompleto'], nota['faturado']['cpfCnpj'])
         duplicada = None
         if f:
             duplicada = conn.execute('SELECT id,status FROM movimentocontas WHERE tipo=%s AND pessoa_id=%s AND numero_nota_fiscal=%s',
@@ -314,7 +316,7 @@ def lancar():
     with conectar() as conn:
         fornecedor_id = garantir_pessoa(conn, 'CLIENTE-FORNECEDOR', nota['fornecedor']['razaoSocial'],
                                          nota['fornecedor']['cnpj'], nota['fornecedor']['fantasia'])
-        faturado_id = garantir_pessoa(conn, 'FATURADO', nota['faturado']['nomeCompleto'], nota['faturado']['cpf'])
+        faturado_id = garantir_pessoa(conn, 'FATURADO', nota['faturado']['nomeCompleto'], nota['faturado']['cpfCnpj'])
         classificacoes_ids = [garantir_classificacao(conn, c) for c in nota['classificacoes']]
         registro = conn.execute('INSERT INTO movimentocontas(tipo,pessoa_id,faturado_id,numero_nota_fiscal,data_emissao,descricao_produtos,valor_total) '
                                 'VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING id',
@@ -418,7 +420,7 @@ def consultar(nome, registro_id):
         if nome == 'contas':
             registro['fornecedor'] = conn.execute('SELECT razao_social AS "razaoSocial",fantasia,documento AS cnpj FROM pessoas WHERE id=%s',
                                                   (registro['pessoa_id'],)).fetchone()
-            registro['faturado'] = conn.execute('SELECT razao_social AS "nomeCompleto",documento AS cpf FROM pessoas WHERE id=%s',
+            registro['faturado'] = conn.execute('SELECT razao_social AS "nomeCompleto",documento AS "cpfCnpj" FROM pessoas WHERE id=%s',
                                                 (registro['faturado_id'],)).fetchone()
             registro['classificacoes'] = [r['descricao'] for r in conn.execute('SELECT c.descricao FROM classificacao c '
                 'JOIN movimento_classificacao mc ON mc.classificacao_id=c.id WHERE mc.movimento_id=%s ORDER BY c.id', (registro_id,))]
@@ -436,7 +438,7 @@ def validar_cadastro(nome, dados):
             raise ErroValidacao('Tipo da pessoa inválido.')
         return {'tipo': tipo, 'razao_social': texto(dados.get('razao_social', ''), 'Nome / razão social'),
                 'fantasia': texto(dados.get('fantasia', ''), 'Nome fantasia', obrigatorio=False),
-                'documento': documento(dados.get('documento', ''), 'CPF/CNPJ', cpf=tipo == 'FATURADO')}
+                'documento': documento(dados.get('documento', ''), 'CPF/CNPJ')}
     tipo = dados.get('tipo')
     if tipo not in ('DESPESA', 'RECEITA'):
         raise ErroValidacao('Tipo da classificação inválido.')
@@ -472,7 +474,7 @@ def editar(nome, registro_id):
                 raise ErroValidacao('Reative a conta antes de editar.')
             nota = validados
             pessoa = garantir_pessoa(conn, 'CLIENTE-FORNECEDOR', nota['fornecedor']['razaoSocial'], nota['fornecedor']['cnpj'], nota['fornecedor']['fantasia'])
-            faturado = garantir_pessoa(conn, 'FATURADO', nota['faturado']['nomeCompleto'], nota['faturado']['cpf'])
+            faturado = garantir_pessoa(conn, 'FATURADO', nota['faturado']['nomeCompleto'], nota['faturado']['cpfCnpj'])
             categorias = [garantir_classificacao(conn, c) for c in nota['classificacoes']]
             conn.execute('UPDATE movimentocontas SET tipo=%s,pessoa_id=%s,faturado_id=%s,numero_nota_fiscal=%s,data_emissao=%s,'
                          'descricao_produtos=%s,valor_total=%s,atualizado_em=now() WHERE id=%s',
@@ -800,9 +802,10 @@ RESPONSE_SCHEMA = {
         "faturado": {
             "type": "object",
             "properties": {
-                "nomeCompleto": {"type": "string"},
-                "cpf": {"type": "string"},
+                "nomeCompleto": {"type": "string", "description": "Nome completo ou razão social do destinatário"},
+                "cpfCnpj": {"type": "string", "description": "CPF ou CNPJ do destinatário, conforme impresso na nota"},
             },
+            "required": ["nomeCompleto", "cpfCnpj"],
         },
         "descricaoProdutos": {
             "type": "string",
@@ -829,6 +832,7 @@ RESPONSE_SCHEMA = {
         "numeroNotaFiscal",
         "dataEmissao",
         "fornecedor",
+        "faturado",
         "valorTotal",
         "classificacaoDespesa",
         "parcelas",
@@ -844,6 +848,8 @@ Analise o PDF de nota fiscal (NF-e/DANFE) anexado e extraia os dados abaixo, ret
 Regras importantes:
 - "fornecedor" é a empresa/pessoa que EMITIU a nota (emitente).
 - "faturado" é o destinatário/comprador da nota (cliente).
+- Em "faturado.nomeCompleto", informe o nome da pessoa ou a razão social da empresa destinatária.
+- Em "faturado.cpfCnpj", extraia o CPF (11 dígitos) ou o CNPJ (14 dígitos) do quadro DESTINATÁRIO/REMETENTE. O destinatário pode ser pessoa física ou jurídica; aceite ambos. Não use o documento do emitente neste campo.
 - "descricaoProdutos" deve ser um resumo textual curto dos itens/produtos da nota (não crie uma lista de objetos, apenas texto).
 - "valorTotal" é o valor total da nota fiscal (número, sem "R$", use ponto como separador decimal).
 - Para "parcelas": se a nota tiver apenas uma condição de pagamento/vencimento, gere um array com 1 item. Se houver várias parcelas/duplicatas, gere um item por parcela.

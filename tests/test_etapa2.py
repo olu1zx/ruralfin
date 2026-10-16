@@ -238,3 +238,66 @@ def test_extracao_nao_repete_erro_de_chave(cliente, monkeypatch):
     resposta = cliente.post('/api/extrair', data={'apiKey': 'teste', 'pdf': (BytesIO(b'%PDF-1.4\n%%EOF'), 'nota.pdf')})
     assert resposta.status_code == 502 and len(chamadas) == 1
     assert 'chave' in resposta.json['error']
+
+
+@pytest.mark.parametrize('campo,valor,esperado', [
+    ('cpfCnpj', '999.999.999-99', '99999999999'),
+    ('cpfCnpj', '22.222.222/0001-00', '22222222000100'),
+    ('cpf', '999.999.999-99', '99999999999'),
+    ('cnpj', '22.222.222/0001-00', '22222222000100'),
+])
+def test_faturado_cpf_cnpj_consulta_gravacao_edicao(cliente, nota, ambiente, campo, valor, esperado):
+    nota['faturado'] = {'nomeCompleto': 'DESTINATÁRIO DE TESTE', campo: valor}
+    consulta = cliente.post('/api/analisar', json=nota)
+    assert consulta.status_code == 200 and consulta.json['podeLancar']
+    assert consulta.json['faturado']['documento'] == esperado
+    registro = cliente.post('/api/lancar', json=nota)
+    assert registro.status_code == 201
+    id = registro.json['id']
+    reaberta = cliente.get(f'/api/cadastros/contas/{id}').json
+    assert reaberta['faturado']['cpfCnpj'] == esperado
+    assert cliente.put(f'/api/cadastros/contas/{id}', json=nota).status_code == 200
+    consulta = cliente.post('/api/analisar', json=nota).json
+    assert consulta['faturado']['existe']
+    assert quantidade(ambiente, 'pessoas') == 2
+
+
+def test_cadastro_faturado_aceita_cnpj_e_recusa_documento_invalido(cliente):
+    cadastro = {'tipo': 'FATURADO', 'razao_social': 'EMPRESA FICTÍCIA', 'documento': '22.222.222/0001-00'}
+    resposta = cliente.post('/api/cadastros/pessoas', json=cadastro)
+    assert resposta.status_code == 201 and resposta.json['documento'] == '22222222000100'
+    cadastro['documento'] = '123456789012'
+    assert cliente.put(f"/api/cadastros/pessoas/{resposta.json['id']}", json=cadastro).status_code == 400
+
+
+def test_migracao_faturado_preserva_registros_e_aceita_cnpj(ambiente):
+    from app import inicializar
+    with ambiente.app_context(), conectar() as conn:
+        conn.execute("ALTER TABLE pessoas ADD CONSTRAINT pessoas_check CHECK (tipo <> 'FATURADO' OR length(documento) = 11)")
+        id = conn.execute("INSERT INTO pessoas(tipo,razao_social,documento) VALUES ('FATURADO','CPF ANTERIOR','99999999999') RETURNING id").fetchone()['id']
+    with ambiente.app_context():
+        inicializar()
+        inicializar()
+        with conectar() as conn:
+            assert conn.execute('SELECT documento FROM pessoas WHERE id=%s', (id,)).fetchone()['documento'] == '99999999999'
+            conn.execute("INSERT INTO pessoas(tipo,razao_social,documento) VALUES ('FATURADO','CNPJ NOVO','22222222000100')")
+    assert quantidade(ambiente, 'pessoas') == 2
+
+
+def test_extracao_cnpj_destinatario_chega_ao_lancamento(cliente, nota, monkeypatch):
+    import app as modulo
+    nota['faturado'] = {'nomeCompleto': 'DESTINATÁRIO EMPRESA FICTÍCIA', 'cpfCnpj': '22.222.222/0001-00'}
+    class Resposta:
+        status_code = 200
+        def json(self): return {'candidates': [{'content': {'parts': [{'text': json.dumps(nota)}]}}]}
+    def enviar(url, **kwargs):
+        schema = kwargs['json']['generationConfig']['responseSchema']
+        assert 'faturado' in schema['required']
+        assert 'cpfCnpj' in schema['properties']['faturado']['required']
+        assert 'DESTINATÁRIO/REMETENTE' in kwargs['json']['contents'][0]['parts'][0]['text']
+        return Resposta()
+    monkeypatch.setattr(modulo.requests, 'post', enviar)
+    extraida = cliente.post('/api/extrair', data={'apiKey': 'teste', 'pdf': (BytesIO(b'%PDF-1.4\n%%EOF'), 'nota.pdf')})
+    assert extraida.status_code == 200
+    assert cliente.post('/api/analisar', json=extraida.json).json['podeLancar']
+    assert cliente.post('/api/lancar', json=extraida.json).status_code == 201

@@ -9,9 +9,12 @@ CREATE TABLE IF NOT EXISTS pessoas (
     status VARCHAR(7) NOT NULL DEFAULT 'ATIVO' CHECK (status IN ('ATIVO','INATIVO')),
     criado_em TIMESTAMPTZ NOT NULL DEFAULT now(),
     atualizado_em TIMESTAMPTZ NOT NULL DEFAULT now(),
-    UNIQUE (tipo, documento),
-    CHECK (tipo <> 'FATURADO' OR length(documento) = 11)
+    UNIQUE (tipo, documento)
 );
+
+-- Atualiza bancos anteriores: FATURADO também pode ser pessoa jurídica.
+-- A regra de 11 ou 14 dígitos permanece em pessoas_documento_check.
+ALTER TABLE pessoas DROP CONSTRAINT IF EXISTS pessoas_check;
 
 CREATE TABLE IF NOT EXISTS classificacao (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
