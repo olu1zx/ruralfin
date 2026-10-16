@@ -29,7 +29,7 @@
         </div>
         <h3>Produtos / serviços</h3>
         <div id="notaProdutos" class="item-list"></div>
-        <button type="button" id="adicionarProduto">+ Adicionar produto / serviço</button>
+        <div class="actions"><button type="button" id="adicionarProduto">+ Adicionar produto / serviço</button><button type="button" id="separarProdutos" class="hidden">Separar itens agrupados</button></div>
         <h3>Parcelas</h3>
         <div id="notaParcelas"></div>
         <p class="hint" id="resumoParcelas"></p>
@@ -306,7 +306,7 @@ td[data-campo=valor_total],th[data-campo=valor_total] { text-align:right; font-v
 @media(max-width:500px){.parcelas{grid-template-columns:24px minmax(0,1fr) 34px;}.parcelas .money-input{grid-column:2;}.parcelas button{grid-column:3;grid-row:1 / span 2;}.editor-heading h2{font-size:20px;}}
 
 .products-view{margin:8px 0;padding-left:22px;}.products-view li{padding:6px 0;border-bottom:1px solid var(--border);}
-dialog{width:min(440px,calc(100% - 32px));border:1px solid var(--border);border-top:4px solid var(--forest);border-radius:14px;padding:24px;background:var(--surface);color:var(--ink);box-shadow:0 16px 60px #10261c40;}dialog::backdrop{background:#10261c80;}dialog h2{margin-bottom:12px;}dialog .actions{justify-content:flex-end;}
+dialog{width:min(440px,calc(100% - 32px));border:1px solid var(--border);border-top:4px solid var(--forest);border-radius:14px;padding:24px;background:var(--surface);color:var(--ink);box-shadow:0 16px 60px #10261c40;}#confirmacaoTexto{white-space:pre-line;max-height:45vh;overflow:auto;}dialog::backdrop{background:#10261c80;}dialog h2{margin-bottom:12px;}dialog .actions{justify-content:flex-end;}
   </style>
 </head>
 <body>
@@ -561,10 +561,38 @@ function adicionarItem(id, nome, valor, limite, maximo) {
   const linha = document.createElement('div'); linha.className = 'item-row';
   const input = document.createElement('input'); input.type = 'text'; input.value = valor || ''; input.maxLength = limite; input.required = true;
   const remover = botaoIcone('remover', `Remover ${nome.toLowerCase()}`, 'danger');
-  remover.addEventListener('click',()=>{linha.remove();renumerarItens(container,nome);invalidarConsulta();});
+  remover.addEventListener('click',()=>{linha.remove();renumerarItens(container,nome);invalidarConsulta();if(id==='notaProdutos')atualizarSeparacaoProdutos();});
+  if(id==='notaProdutos')input.addEventListener('input',atualizarSeparacaoProdutos);
   linha.append(input,remover);container.append(linha);renumerarItens(container,nome);
 }
-function adicionarProduto(valor='') { adicionarItem('notaProdutos','Produto / serviço',valor,1000,200); }
+function adicionarProduto(valor='') { adicionarItem('notaProdutos','Produto / serviço',valor,1000,200);atualizarSeparacaoProdutos(); }
+function sugerirItensProduto(texto) {
+  const itens=[];let inicio=0,aspas=false,nivel=0;
+  for(let i=0;i<texto.length;i++){
+    const c=texto[i];
+    if(c==='"'){aspas=!aspas;continue;}
+    if(aspas)continue;
+    if(c==='('||c==='[')nivel++;
+    if(c===')'||c===']')nivel=Math.max(0,nivel-1);
+    const decimal=c===','&&/\d/.test(texto[i-1]||'')&&/\d/.test(texto[i+1]||'');
+    if(nivel===0&&(c===';'||c==='\n'||(c===','&&!decimal))){const item=texto.slice(inicio,i).trim();if(item)itens.push(item);inicio=i+1;}
+  }
+  const ultimo=texto.slice(inicio).trim();if(ultimo)itens.push(ultimo);return itens;
+}
+function atualizarSeparacaoProdutos(){
+  const agrupados=[...$('notaProdutos').querySelectorAll('input')].some(i=>sugerirItensProduto(i.value).length>1);
+  $('separarProdutos').classList.toggle('hidden',!agrupados);
+}
+$('separarProdutos').addEventListener('click',async()=>{
+  if($('notaCampos').disabled)return;
+  const valores=[...$('notaProdutos').querySelectorAll('input')].map(i=>i.value);
+  const itens=valores.flatMap(sugerirItensProduto);
+  if(itens.length>200){notaStatus('A separação ultrapassaria o limite de 200 produtos. Ajuste a lista.','err');return;}
+  const previa=itens.map((item,i)=>`${i+1}. ${item}`).join('\n');
+  if(!await confirmarAcao(`Separar os textos agrupados em ${itens.length} linhas? Confira os itens abaixo. Linhas vazias serão removidas.\n\n${previa}`))return;
+  if(JSON.stringify(valores)!==JSON.stringify([...$('notaProdutos').querySelectorAll('input')].map(i=>i.value))){notaStatus('A lista mudou. Confira os produtos e tente novamente.','err');return;}
+  $('notaProdutos').replaceChildren();itens.forEach(adicionarProduto);invalidarConsulta();atualizarSeparacaoProdutos();notaStatus('Produtos separados em linhas individuais. Confira antes de lançar.','ok');
+});
 function adicionarClassificacao(valor='') { adicionarItem('notaClassificacoes','Classificação',valor,120,30); }
 function adicionarParcela(parcela = {}) {
   if ($('notaParcelas').children.length >= 120) return;

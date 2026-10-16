@@ -295,6 +295,7 @@ def test_extracao_cnpj_destinatario_chega_ao_lancamento(cliente, nota, monkeypat
     def enviar(url, **kwargs):
         schema = kwargs['json']['generationConfig']['responseSchema']
         assert 'faturado' in schema['required']
+        assert 'produtos' in schema['required']
         assert 'cpfCnpj' in schema['properties']['faturado']['required']
         assert 'DESTINATÁRIO/REMETENTE' in kwargs['json']['contents'][0]['parts'][0]['text']
         return Resposta()

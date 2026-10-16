@@ -37,6 +37,9 @@ parcelas e classificações. Os dados extraídos e os cadastros existentes come�
 bloqueados; use o cadeado e confirme para editar. Produtos e classificações têm
 controles individuais de inclusão e remoção. Os produtos continuam guardados
 na descrição da conta, sem uma entidade adicional de produtos.
+Se uma descrição antiga trouxer vários produtos juntos, use **Separar itens
+agrupados** após desbloquear a revisão. Confira a prévia e confirme a divisão
+em linhas; vírgulas em números, textos entre aspas e parênteses são preservadas.
 
 ## Apresentação e indisponibilidade da IA
 
