@@ -89,6 +89,11 @@ body {
 .logo-mark img { display:block; width:112%; max-width:none; height:112%; object-fit:contain; }
 .brand-header h1 { font-family:Fraunces,Georgia,serif; font-weight:600; font-size:32px; line-height:1.2; margin:0; letter-spacing:.01em; color:#fffdf6; }
 .brand-header p { margin:6px 0 0; font-size:13px; color:#d9e6dd; }
+.header-user { position:relative; z-index:1; margin-left:auto; align-self:flex-end; display:flex; align-items:center; gap:10px; max-width:40%; padding:9px 13px; border:1px solid #ffffff30; border-radius:12px; background:#ffffff0d; }
+.header-user svg { width:24px; height:24px; flex:none; color:#d9e6dd; }
+.header-user span { min-width:0; }
+.header-user small { display:block; color:#d9e6dd; font-size:11px; }
+.header-user strong { display:block; font-size:14px; font-weight:600; overflow-wrap:anywhere; }
 .nav { display:flex; align-items:center; flex-wrap:wrap; gap:8px; padding:8px; margin:0 0 24px; border:1px solid var(--border); border-radius:14px; background:#fffdf6d9; box-shadow:0 3px 10px #2a251906; }
 .nav a { padding:10px 17px; border:1px solid transparent; border-radius:9px; color:var(--forest-dark); text-decoration:none; font-weight:600; transition:background .15s; }
 .nav a:hover { background:var(--forest-tint); }
@@ -162,6 +167,8 @@ a { color:var(--forest-dark); }
   .card { padding:20px; }
 }
 @media(max-width:500px) {
+  .brand-header { flex-wrap:wrap; }
+  .header-user { margin-left:auto; max-width:100%; flex-basis:100%; justify-content:flex-end; }
   .grid { grid-template-columns:1fr; }
   .full { grid-column:auto; }
   .nav a { flex:1 0 38%; text-align:center; }
@@ -323,6 +330,12 @@ dialog{width:min(440px,calc(100% - 32px));border:1px solid var(--border);border-
     <header class="brand-header">
       <div class="logo-mark"><img src="{{ url_for('static', filename='logo.png') }}" alt="Logo RuralFin" width="76" height="76"></div>
       <div><h1>RuralFin</h1>{% if not tela_login %}<p>Controle financeiro rural</p>{% endif %}</div>
+      {% if not tela_login and session.get('usuario') %}
+      <div class="header-user" aria-label="Usuário conectado">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg>
+        <span><small>Conectado como</small><strong>{{ session['usuario'] }}</strong></span>
+      </div>
+      {% endif %}
     </header>
     {% if not tela_login %}
     <nav class="nav" aria-label="Navegação principal">

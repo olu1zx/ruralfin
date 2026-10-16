@@ -156,9 +156,17 @@ def test_csrf_e_login(cliente, ambiente, monkeypatch):
     monkeypatch.setitem(ambiente.config,'APP_USERNAME','admin')
     assert cliente.get('/api/cadastros/pessoas?todos=1').status_code == 401
     html = cliente.get('/login').get_data(as_text=True)
+    assert 'class="header-user"' not in html
     token = re.search(r'name="csrf_token" value="([^"]+)"',html).group(1)
     assert cliente.post('/login',data={'usuario':'admin','senha':'senha-teste','csrf_token':token}).status_code == 302
     assert cliente.get('/api/saude').status_code == 200
+    for rota in ('/', '/cadastros/pessoas', '/cadastros/classificacoes', '/cadastros/contas'):
+        html = cliente.get(rota).get_data(as_text=True)
+        assert 'class="header-user"' in html and '<strong>admin</strong>' in html
+    with cliente.session_transaction() as sess:
+        token = sess['csrf']
+    assert cliente.post('/sair', data={'csrf_token': token}, headers={'X-CSRF-Token': token}).status_code == 302
+    assert 'class="header-user"' not in cliente.get('/login').get_data(as_text=True)
 
 
 def test_lancamentos_concorrentes_nao_duplicam(ambiente, nota):
