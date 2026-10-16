@@ -1,6 +1,7 @@
 from copy import deepcopy
 from io import BytesIO
 import json
+import hashlib
 import re
 from concurrent.futures import ThreadPoolExecutor
 
@@ -181,7 +182,8 @@ def test_extracao_preservada_sem_chamar_google(cliente, nota, monkeypatch):
     monkeypatch.setattr(modulo.requests,'post',lambda *a,**k:Resposta())
     resposta=cliente.post('/api/extrair',data={'apiKey':'teste','pdf':(BytesIO(b'%PDF-1.4\n%%EOF'),'nota.pdf')})
     assert resposta.status_code==200
-    assert resposta.json==nota
+    assert {k:v for k,v in resposta.json.items() if k!='_ruralfin'}==nota
+    assert resposta.json['_ruralfin']['pdfSha256']
     assert resposta.headers['Cache-Control']=='no-store'
 
 
@@ -205,7 +207,7 @@ def test_extracao_usa_alternativa_apos_sobrecarga(cliente, nota, monkeypatch):
     monkeypatch.setattr(modulo.requests, 'post', enviar)
     monkeypatch.setattr(modulo.time, 'sleep', esperas.append)
     resposta = cliente.post('/api/extrair', data={'apiKey': 'teste', 'pdf': (BytesIO(b'%PDF-1.4\n%%EOF'), 'nota.pdf')})
-    assert resposta.status_code == 200 and resposta.json == nota
+    assert resposta.status_code == 200 and {k:v for k,v in resposta.json.items() if k!='_ruralfin'} == nota
     assert len(chamadas) == 3 and 'alternativo:generateContent' in chamadas[-1]
     assert len(esperas) == 1 and 2 <= esperas[0] < 3
 
@@ -301,3 +303,86 @@ def test_extracao_cnpj_destinatario_chega_ao_lancamento(cliente, nota, monkeypat
     assert extraida.status_code == 200
     assert cliente.post('/api/analisar', json=extraida.json).json['podeLancar']
     assert cliente.post('/api/lancar', json=extraida.json).status_code == 201
+
+
+def test_lista_produtos_preserva_itens_na_gravacao_e_edicao(cliente, nota):
+    nota['produtos'] = ['Kit hidráulico, com conexões', 'Filtro de óleo']
+    nota['descricaoProdutos'] = 'Texto anterior'
+    r = cliente.post('/api/lancar', json=nota)
+    assert r.status_code == 201
+    url = f"/api/cadastros/contas/{r.json['id']}"
+    conta = cliente.get(url).json
+    assert conta['produtos'] == nota['produtos']
+    assert conta['descricao_produtos'] == 'Kit hidráulico, com conexões\nFiltro de óleo'
+    nota['produtos'] = ['Filtro de óleo']
+    assert cliente.put(url, json=nota).status_code == 200
+    assert cliente.get(url).json['produtos'] == ['Filtro de óleo']
+
+
+def test_json_salvo_recupera_sem_gemini_e_vincula_pdf(cliente, nota, monkeypatch):
+    import app as modulo
+    def proibido(*a, **k): raise AssertionError('Recuperação não deve chamar o Gemini.')
+    monkeypatch.setattr(modulo.requests, 'post', proibido)
+    pdf = b'%PDF-1.4\nEXEMPLO-FICTICIO\n%%EOF'
+    nota['_ruralfin'] = {'pdfSha256': hashlib.sha256(pdf).hexdigest(), 'origem': 'gemini'}
+    r = cliente.post('/api/revisar-json', data={'dados': json.dumps(nota), 'pdf': (BytesIO(pdf), 'nota.pdf')})
+    assert r.status_code == 200 and r.json['_ruralfin']['origem'] == 'json_salvo'
+    assert cliente.post('/api/analisar', json=r.json).json['podeLancar']
+    registro = cliente.post('/api/lancar', data={'dados': json.dumps(r.json), 'origem': 'json_salvo', 'pdf': (BytesIO(pdf), 'nota.pdf')})
+    assert registro.status_code == 201
+    assert cliente.get(f"/api/contas/{registro.json['id']}/documento").data == pdf
+
+
+@pytest.mark.parametrize('erro', ['pdf_diferente', 'sem_pdf', 'sem_vinculo', 'json_invalido', 'estrutura_invalida'])
+def test_json_salvo_recusa_arquivo_incorreto_sem_gravar(cliente, nota, ambiente, erro):
+    pdf = b'%PDF-1.4\n%%EOF'
+    nota['_ruralfin'] = {'pdfSha256': hashlib.sha256(pdf).hexdigest()}
+    if erro == 'sem_vinculo': nota.pop('_ruralfin')
+    bruto = '{invalido' if erro == 'json_invalido' else '{}' if erro == 'estrutura_invalida' else json.dumps(nota)
+    dados = {'dados': bruto}
+    if erro != 'sem_pdf': dados['pdf'] = (BytesIO(pdf + (b'outro' if erro == 'pdf_diferente' else b'')), 'nota.pdf')
+    assert cliente.post('/api/revisar-json', data=dados).status_code == 400
+    assert quantidade(ambiente, 'movimentocontas') == 0
+
+
+def test_json_salvo_exige_pdf_no_lancamento(cliente, nota):
+    assert cliente.post('/api/lancar', data={'dados': json.dumps(nota), 'origem': 'json_salvo'}).status_code == 400
+
+
+def test_extracao_limita_espera_apos_timeout(cliente, monkeypatch):
+    import app as modulo
+    from types import SimpleNamespace
+    tempos = iter([0, 0, 85])
+    chamadas = []
+    def enviar(*a, **k):
+        chamadas.append(k['timeout'])
+        raise modulo.requests.exceptions.Timeout()
+    monkeypatch.setattr(modulo, 'time', SimpleNamespace(monotonic=lambda: next(tempos), sleep=lambda t: None))
+    monkeypatch.setattr(modulo.requests, 'post', enviar)
+    r = cliente.post('/api/extrair', data={'apiKey': 'teste', 'pdf': (BytesIO(b'%PDF-1.4\n%%EOF'), 'nota.pdf')})
+    assert r.status_code == 504 and 'JSON' in r.json['error']
+    assert chamadas == [(5, 25)]
+
+
+@pytest.mark.parametrize('conteudo', ['{}', '[]', '{incompleto', '{"numeroNotaFiscal":55}'])
+def test_extracao_rejeita_resposta_fora_da_estrutura(cliente, monkeypatch, conteudo):
+    import app as modulo
+    class Resposta:
+        status_code = 200
+        def json(self): return {'candidates': [{'content': {'parts': [{'text': conteudo}]}}]}
+    monkeypatch.setattr(modulo.requests, 'post', lambda *a, **k: Resposta())
+    monkeypatch.setattr(modulo.time, 'sleep', lambda t: None)
+    r = cliente.post('/api/extrair', data={'apiKey': 'teste', 'pdf': (BytesIO(b'%PDF-1.4\n%%EOF'), 'nota.pdf')})
+    assert r.status_code == 502 and 'error' in r.json
+
+
+def test_id_ordena_ascendente_e_descendente_em_todos_os_cadastros(cliente, nota):
+    cliente.post('/api/lancar', json=nota)
+    nota['numeroNotaFiscal'] = 'OUTRA-NOTA'
+    nota['classificacaoDespesa'] = 'INVESTIMENTOS'
+    cliente.post('/api/lancar', json=nota)
+    for recurso in ('pessoas', 'classificacoes', 'contas'):
+        crescente = cliente.get(f'/api/cadastros/{recurso}?todos=1&ordem=id&direcao=asc').json['registros']
+        decrescente = cliente.get(f'/api/cadastros/{recurso}?todos=1&ordem=id&direcao=desc').json['registros']
+        assert [r['id'] for r in crescente] == sorted(r['id'] for r in crescente)
+        assert [r['id'] for r in decrescente] == list(reversed([r['id'] for r in crescente]))

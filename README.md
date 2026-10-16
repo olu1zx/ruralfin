@@ -32,6 +32,27 @@ Há telas para pessoas, classificações e contas. As tabelas começam vazias;
 Os títulos das colunas ordenam os registros. **Inativar** faz exclusão lógica;
 o filtro **Inativos** permite encontrar e reativar registros.
 
+A revisão segue a ordem da visualização: nota, fornecedor, faturado, produtos,
+parcelas e classificações. Os dados extraídos e os cadastros existentes começam
+bloqueados; use o cadeado e confirme para editar. Produtos e classificações têm
+controles individuais de inclusão e remoção. Os produtos continuam guardados
+na descrição da conta, sem uma entidade adicional de produtos.
+
+## Apresentação e indisponibilidade da IA
+
+1. Antes da apresentação, extraia a nota e use **Baixar .JSON** na versão atual.
+   Guarde esse JSON e o PDF original juntos.
+2. Se o Gemini demorar ou retornar erro, use **Cancelar espera**, selecione o
+   mesmo PDF e abra **Usar uma extração salva** para carregar o JSON.
+3. O sistema confere o vínculo entre os arquivos e permite revisar, consultar
+   e lançar os dados sem uma nova chamada ao Gemini. A tela identifica que a
+   extração foi recuperada; isso não simula uma extração nova.
+
+O site e o banco ainda precisam de internet. JSONs antigos sem o vínculo do PDF
+não podem ser usados nessa recuperação; exporte um arquivo atualizado antes.
+A espera no navegador é limitada a 110 segundos, com opção de cancelamento.
+Falhas temporárias da API têm tentativas limitadas; chave inválida não é repetida.
+
 ## Regras implementadas
 
 - Nenhum cadastro financeiro é excluído fisicamente pela aplicação. Triggers

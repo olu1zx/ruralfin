@@ -1,42 +1,51 @@
 {% set tela_login = pagina is defined and pagina == 'login' %}
 {% macro editor_nota() -%}
 <section class="card editor hidden" id="notaEditor" aria-labelledby="editorTitulo">
-  <h2 id="editorTitulo">Revisar dados da nota</h2>
-  <p class="hint">Confira os dados antes de lançar. Se o PDF não informar um campo, preencha-o aqui.</p>
-  <form id="notaForm">
-    <div class="grid">
-      <div><label for="notaTipo">Tipo da conta</label><select id="notaTipo"><option value="APAGAR">A pagar (despesa)</option><option value="ARECEBER">A receber (receita)</option></select></div>
-      <div><label for="notaNumero">Número da nota / documento</label><input id="notaNumero" maxlength="60" required></div>
-      <div><label for="notaEmissao">Data de emissão</label><input type="date" id="notaEmissao" required></div>
-      <div><label for="notaTotal">Valor total (R$)</label><input type="number" id="notaTotal" min="0.01" step="0.01" required></div>
-      <div class="full"><label for="notaDescricao">Descrição dos produtos / serviços</label><textarea id="notaDescricao" maxlength="10000"></textarea></div>
-    </div>
-    <h3 id="pessoaTitulo">Fornecedor</h3>
-    <div class="grid">
-      <div><label for="notaRazao">Nome / razão social</label><input id="notaRazao" maxlength="200" required></div>
-      <div><label for="notaFantasia">Nome fantasia</label><input id="notaFantasia" maxlength="200"></div>
-      <div class="full"><label for="notaCnpj">CPF/CNPJ do fornecedor ou cliente</label><input id="notaCnpj" maxlength="18" required></div>
-    </div>
-    <h3>Faturado</h3>
-    <div class="grid">
-      <div><label for="notaNome">Nome / razão social</label><input id="notaNome" maxlength="200" required></div>
-      <div><label for="notaCpfCnpj">CPF/CNPJ</label><input id="notaCpfCnpj" maxlength="18" required></div>
-    </div>
-    <h3>Classificações</h3>
-    <label for="notaCategorias">Uma classificação por linha</label>
-    <textarea id="notaCategorias" required placeholder="MANUTENÇÃO E OPERAÇÃO"></textarea>
-    <h3>Parcelas</h3>
-    <div id="notaParcelas"></div>
-    <button type="button" id="adicionarParcela">+ Adicionar parcela</button>
-    <div class="actions">
-      <button class="primary" type="submit" id="analisarBtn">Consultar no banco</button>
-      <button type="button" id="cancelarNota">Cancelar</button>
-    </div>
-  </form>
-  <div id="consultaResultado" class="check-rows hidden" aria-live="polite"></div>
-  <div class="actions hidden" id="lancarActions"><button class="primary" type="button" id="lancarBtn">Confirmar e lançar conta</button></div>
+  <div class="editor-heading">
+    <button type="button" id="alternarRevisao" class="accordion-trigger" aria-expanded="false" aria-controls="notaConteudo"><h2 id="editorTitulo">Revisar dados da nota</h2><span id="setaRevisao" aria-hidden="true">⌄</span></button>
+    <button type="button" class="icon-btn" id="cadeadoNota" aria-label="Desbloquear edição da nota" title="Desbloquear edição da nota"></button>
+  </div>
+  <p class="hint" id="avisoBloqueio">Dados protegidos. Abra a revisão para conferir; use o cadeado para autorizar alterações.</p>
+  <div id="notaConteudo" class="hidden">
+    <form id="notaForm">
+      <fieldset id="notaCampos" disabled>
+        <h3>Nota fiscal</h3>
+        <div class="grid">
+          <div><label for="notaTipo">Tipo da conta</label><select id="notaTipo"><option value="APAGAR">A pagar (despesa)</option><option value="ARECEBER">A receber (receita)</option></select></div>
+          <div><label for="notaNumero">Número da nota / documento</label><input id="notaNumero" maxlength="60" required></div>
+          <div><label for="notaEmissao">Data de emissão</label><input type="date" id="notaEmissao" required></div>
+          <div><label for="notaTotal">Valor total (R$)</label><div class="money-input"><span aria-hidden="true">R$</span><input type="text" inputmode="decimal" class="valor-moeda" id="notaTotal" required placeholder="0,00"></div></div>
+        </div>
+        <h3 id="pessoaTitulo">Fornecedor</h3>
+        <div class="grid">
+          <div><label for="notaRazao">Nome / razão social</label><input id="notaRazao" maxlength="200" required></div>
+          <div><label for="notaFantasia">Nome fantasia</label><input id="notaFantasia" maxlength="200"></div>
+          <div class="full"><label for="notaCnpj">CPF/CNPJ</label><input id="notaCnpj" maxlength="18" required></div>
+        </div>
+        <h3>Faturado</h3>
+        <div class="grid">
+          <div><label for="notaNome">Nome / razão social</label><input id="notaNome" maxlength="200" required></div>
+          <div><label for="notaCpfCnpj">CPF/CNPJ</label><input id="notaCpfCnpj" maxlength="18" required></div>
+        </div>
+        <h3>Produtos / serviços</h3>
+        <div id="notaProdutos" class="item-list"></div>
+        <button type="button" id="adicionarProduto">+ Adicionar produto / serviço</button>
+        <h3>Parcelas</h3>
+        <div id="notaParcelas"></div>
+        <p class="hint" id="resumoParcelas"></p>
+        <button type="button" id="adicionarParcela">+ Adicionar parcela</button>
+        <h3>Classificações</h3>
+        <div id="notaClassificacoes" class="item-list"></div>
+        <button type="button" id="adicionarClassificacao">+ Adicionar classificação</button>
+      </fieldset>
+      <div class="actions"><button class="primary" type="submit" id="analisarBtn">Consultar no banco</button><button type="button" id="cancelarNota">Fechar revisão</button></div>
+    </form>
+    <div id="consultaResultado" class="check-rows hidden" aria-live="polite"></div>
+    <div class="actions hidden" id="lancarActions"><button class="primary" type="button" id="lancarBtn">Confirmar e lançar conta</button></div>
+  </div>
   <div id="notaStatus" class="status" role="status" aria-live="polite"></div>
 </section>
+
 {%- endmacro %}
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -266,6 +275,38 @@ input[type=file]{
     border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;
   }
   @keyframes spin{to{transform:rotate(360deg);}}
+
+fieldset { min-width:0; border:0; margin:0; padding:0; }
+fieldset:disabled input,fieldset:disabled select { color:#4c5149; background:#f4f5ed; opacity:1; }
+.editor-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.editor-heading h2 { margin:0; }
+.accordion-trigger { display:flex; align-items:center; justify-content:space-between; gap:16px; flex:1; min-width:0; padding:0; border:0; background:none; text-align:left; }
+.editor-heading+.hint { margin:12px 0 0; }
+#notaConteudo { margin-top:22px; }
+.icon-btn { width:34px; height:34px; display:inline-flex; flex:none; align-items:center; justify-content:center; padding:7px; border-radius:7px; }
+.icon-btn svg { width:19px; height:19px; }
+.item-row { display:grid; grid-template-columns:minmax(0,1fr) 34px; gap:10px; align-items:center; margin:0 0 10px; }
+.money-input { display:flex; align-items:center; position:relative; min-width:0; }
+.money-input>span { position:absolute; left:12px; color:var(--forest-dark); font-weight:600; pointer-events:none; }
+.money-input input { padding-left:42px; font-variant-numeric:tabular-nums; }
+.parcelas { grid-template-columns:30px minmax(130px,1fr) minmax(140px,1fr) 34px; }
+table { table-layout:fixed; min-width:980px; }
+th,td { overflow-wrap:anywhere; }
+th { padding:13px 10px; }
+th button { display:inline-flex; align-items:center; gap:5px; font-size:13px; font-weight:600; margin:0; padding:0; }
+td[data-campo=documento],th[data-campo=documento],td[data-campo=data_emissao] { white-space:nowrap; font-variant-numeric:tabular-nums; }
+td[data-campo=id],th[data-campo=id],td[data-campo=status],th[data-campo=status] { text-align:center; }
+td[data-campo=valor_total],th[data-campo=valor_total] { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.col-acoes { text-align:center; }
+.row-actions { display:flex; align-items:center; justify-content:center; gap:6px; white-space:nowrap; }
+.row-actions .icon-btn { margin:0; padding:7px; }
+.backup-tools { border-top:1px solid var(--border); margin-top:20px; padding-top:16px; }
+.backup-tools summary { color:var(--forest-dark); cursor:pointer; font-weight:600; }
+.backup-tools .hint { margin:10px 0; }
+@media(max-width:500px){.parcelas{grid-template-columns:24px minmax(0,1fr) 34px;}.parcelas .money-input{grid-column:2;}.parcelas button{grid-column:3;grid-row:1 / span 2;}.editor-heading h2{font-size:20px;}}
+
+.products-view{margin:8px 0;padding-left:22px;}.products-view li{padding:6px 0;border-bottom:1px solid var(--border);}
+dialog{width:min(440px,calc(100% - 32px));border:1px solid var(--border);border-top:4px solid var(--forest);border-radius:14px;padding:24px;background:var(--surface);color:var(--ink);box-shadow:0 16px 60px #10261c40;}dialog::backdrop{background:#10261c80;}dialog h2{margin-bottom:12px;}dialog .actions{justify-content:flex-end;}
   </style>
 </head>
 <body>
@@ -322,7 +363,7 @@ input[type=file]{
     <div id="cadastroStatus" class="status" role="status" aria-live="polite"></div>
   </section>
   <section class="card">
-    <div class="table-wrap"><table id="tabela"><thead id="cabecalho"></thead><tbody id="registros"></tbody></table></div>
+    <div class="table-wrap"><table id="tabela"><colgroup id="colunasTabela"></colgroup><thead id="cabecalho"></thead><tbody id="registros"></tbody></table></div>
     <div class="pagination"><span id="contador" class="hint">Nenhum registro carregado.</span><div><button id="anteriorBtn" disabled>Anterior</button> <button id="proximaBtn" disabled>Próxima</button></div></div>
     <div class="actions"><button id="novoBtn" class="primary">+ Novo registro</button></div>
   </section>
@@ -331,8 +372,8 @@ input[type=file]{
 {{ editor_nota() }}
 
   {% else %}
-    <section class="card editor hidden" id="cadastroEditor"><h2 id="cadastroTitulo">Novo registro</h2>
-      <form id="cadastroForm"><div class="grid">
+    <section class="card editor hidden" id="cadastroEditor"><div class="editor-heading"><h2 id="cadastroTitulo">Novo registro</h2><button type="button" class="icon-btn" id="cadeadoCadastro" aria-label="Desbloquear edição do cadastro" title="Desbloquear edição do cadastro"></button></div>
+      <form id="cadastroForm"><fieldset id="cadastroCampos"><div class="grid">
         <div><label for="tipo">Tipo</label><select id="tipo">
           {% if recurso == 'pessoas' %}<option value="CLIENTE-FORNECEDOR">Cliente / fornecedor</option><option value="FATURADO">Faturado</option>
           {% else %}<option value="DESPESA">Despesa</option><option value="RECEITA">Receita</option>{% endif %}
@@ -344,7 +385,7 @@ input[type=file]{
         {% else %}
         <div><label for="descricao">Descrição</label><input id="descricao" required maxlength="120"></div>
         {% endif %}
-      </div><p class="hint">Novos cadastros ficam ativos automaticamente.</p><div class="actions"><button class="primary" id="salvarCadastro">Salvar</button><button type="button" id="cancelarCadastro">Cancelar</button></div></form>
+      </div></fieldset><p class="hint" id="avisoCadastro">Novos cadastros ficam ativos automaticamente.</p><div class="actions"><button class="primary" id="salvarCadastro">Salvar</button><button type="button" id="cancelarCadastro">Cancelar</button></div></form>
     </section>
   {% endif %}
     {% else %}
@@ -375,7 +416,10 @@ input[type=file]{
         </svg>
       </button>
     </div>
-    <div id="status" class="status"></div>
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <div class="actions"><button type="button" id="cancelarExtracao" class="hidden">Cancelar espera</button></div>
+    <details class="backup-tools"><summary>Usar uma extração salva</summary><p class="hint">Selecione acima o PDF original e abra o JSON exportado anteriormente. Esta opção não consulta o Gemini.</p><label for="jsonSalvo">Arquivo JSON da extração</label><input type="file" id="jsonSalvo" accept=".json,application/json"><div id="jsonStatus" class="status" role="status" aria-live="polite"></div></details>
+
   </div>
 
   <!-- Resultado -->
@@ -404,150 +448,215 @@ input[type=file]{
     {% endif %}
   </main>
   {% if not tela_login %}
+  <dialog id="confirmacaoDialog" aria-labelledby="confirmacaoTitulo"><h2 id="confirmacaoTitulo">Confirmar ação</h2><p id="confirmacaoTexto"></p><div class="actions"><button type="button" id="cancelarConfirmacao" autofocus>Cancelar</button><button type="button" id="confirmarConfirmacao" class="primary">Confirmar</button></div></dialog>
+<script>
+let resolverConfirmacao=null;
+function confirmarAcao(mensagem){
+  if(resolverConfirmacao)return Promise.resolve(false);
+  document.getElementById('confirmacaoTexto').textContent=mensagem;
+  document.getElementById('confirmacaoDialog').showModal();
+  return new Promise(resolve=>{resolverConfirmacao=resolve;});
+}
+function concluirConfirmacao(valor){const resolver=resolverConfirmacao;resolverConfirmacao=null;document.getElementById('confirmacaoDialog').close();if(resolver)resolver(valor);}
+document.getElementById('cancelarConfirmacao').addEventListener('click',()=>concluirConfirmacao(false));
+document.getElementById('confirmarConfirmacao').addEventListener('click',()=>concluirConfirmacao(true));
+document.getElementById('confirmacaoDialog').addEventListener('cancel',e=>{e.preventDefault();concluirConfirmacao(false);});
+const desenhos = {
+  editar:'<path d="m16 3 5 5M4 20l4-1L21 6l-4-4L4 15v5Z"/>',
+  inativar:'<path d="M12 2v10M6 5a9 9 0 1 0 12 0"/>',
+  reativar:'<path d="M3 4v6h6M3 10a9 9 0 1 1 1 8"/>',
+  pdf:'<path d="M14 2H5v20h14V7l-5-5Zm0 0v6h5M8 12h8M8 16h8"/>',
+  remover:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/>',
+  cadeado:'<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4M12 14v3"/>',
+  aberto:'<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0M12 14v3"/>'
+};
+function icone(nome){return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${desenhos[nome]||''}</svg>`;}
+function botaoIcone(nome,rotulo,classe=''){
+  const b=document.createElement('button');b.type='button';b.className='icon-btn '+classe;b.innerHTML=icone(nome);b.setAttribute('aria-label',rotulo);b.title=rotulo;return b;
+}
+function reais(valor){return Number(valor||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
+function documentoFormatado(valor){
+  const v=String(valor||'').replace(/\D/g,'');
+  if(v.length===11)return v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
+  if(v.length===14)return v.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,'$1.$2.$3/$4-$5');
+  return String(valor||'');
+}
+async function lerResposta(res){
+  let dados;
+  try{dados=await res.json();}catch{
+    throw new Error(res.status===413?'O arquivo ultrapassa o limite de envio.':res.status===504?'O serviço demorou para responder. Tente novamente ou abra uma extração salva em JSON.':'O servidor retornou uma resposta inesperada. Recarregue a página e tente novamente.');
+  }
+  if(!res.ok)throw new Error(dados.error||`Não foi possível concluir a operação (${res.status}).`);
+  return dados;
+}
+</script>
     {% if recurso is not defined or recurso == 'contas' %}
 <script>
-// Revisão, consulta e lançamento; aceita também o JSON antigo da primeira etapa.
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 async function api(url, options = {}) {
   const headers = {...options.headers, 'X-CSRF-Token': csrfToken};
   if (options.body && !(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
-  const resposta = await fetch(url, {...options, headers});
-  const dados = await resposta.json();
-  if (!resposta.ok) throw new Error(dados.error || 'Não foi possível concluir a operação.');
-  return dados;
+  return lerResposta(await fetch(url, {...options, headers}));
 }
 const $ = id => document.getElementById(id);
 const notaEditor = $('notaEditor');
-let arquivoNota = null;
-let contaEditando = null;
-let origemNota = 'manual';
-let notaConsultada = null;
-function notaStatus(mensagem, tipo = '') {
-  $('notaStatus').textContent = mensagem;
-  $('notaStatus').className = 'status ' + tipo;
+let arquivoNota = null, contaEditando = null, origemNota = 'manual', notaConsultada = null;
+function notaStatus(mensagem, tipo = '') { $('notaStatus').textContent = mensagem; $('notaStatus').className = 'status ' + tipo; }
+function invalidarConsulta() { notaConsultada = null; $('consultaResultado').classList.add('hidden'); $('lancarActions').classList.add('hidden'); }
+function abrirRevisao(aberta) {
+  $('notaConteudo').classList.toggle('hidden', !aberta);
+  $('alternarRevisao').setAttribute('aria-expanded', String(aberta));
+  $('setaRevisao').textContent = aberta ? '⌃' : '⌄';
 }
-function invalidarConsulta() {
-  notaConsultada = null;
-  $('consultaResultado').classList.add('hidden');
-  $('lancarActions').classList.add('hidden');
+function bloquearNota(bloqueada) {
+  $('notaCampos').disabled = bloqueada;
+  $('cadeadoNota').innerHTML = icone(bloqueada ? 'cadeado' : 'aberto');
+  const acao = bloqueada ? 'Desbloquear edição da nota' : 'Bloquear edição da nota';
+  $('cadeadoNota').setAttribute('aria-label', acao); $('cadeadoNota').title = acao;
+  $('avisoBloqueio').textContent = bloqueada ? 'Dados protegidos. Abra a revisão para conferir; use o cadeado para autorizar alterações.' : 'Edição liberada. Confira os dados e consulte novamente antes de confirmar.';
 }
+$('alternarRevisao').addEventListener('click', () => abrirRevisao($('notaConteudo').classList.contains('hidden')));
+$('cadeadoNota').addEventListener('click', async () => {
+  if ($('notaCampos').disabled) {
+    if (!await confirmarAcao('Deseja desbloquear os dados desta nota para fazer alterações?')) return;
+    bloquearNota(false); abrirRevisao(true); invalidarConsulta();
+  } else { bloquearNota(true); invalidarConsulta(); }
+});
 function isoData(valor) {
   if (!valor) return '';
   const partes = String(valor).split('/');
   return partes.length === 3 ? `${partes[2]}-${partes[1]}-${partes[0]}` : String(valor).slice(0,10);
 }
+function moedaDecimal(valor) {
+  let texto = String(valor ?? '').replace(/R\$|\s/g, '');
+  if (texto.includes(',')) texto = texto.replace(/\./g, '').replace(',', '.');
+  else if (/^\d{1,3}(\.\d{3})+$/.test(texto)) texto = texto.replace(/\./g, '');
+  if (!/^\d+(\.\d{1,2})?$/.test(texto)) return '';
+  return Number(texto).toFixed(2);
+}
+function prepararMoeda(input, valor = '') {
+  input.value = valor === '' ? '' : Number(valor).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  input.addEventListener('input', () => { input.setCustomValidity(''); atualizarSoma(); });
+  input.addEventListener('blur', () => {
+    const decimal = moedaDecimal(input.value);
+    input.setCustomValidity(decimal && Number(decimal) > 0 ? '' : 'Informe um valor em reais, como 1.930,00.');
+    if (decimal) input.value = Number(decimal).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    atualizarSoma();
+  });
+}
+prepararMoeda($('notaTotal'));
+function atualizarSoma() {
+  const total = [...$('notaParcelas').querySelectorAll('.valor-moeda')].reduce((n,i)=>n+Math.round(Number(moedaDecimal(i.value)||0)*100),0)/100;
+  $('resumoParcelas').textContent = `Total das parcelas: ${reais(total)}`;
+}
+function renumerarItens(container, nome) {
+  [...container.children].forEach((linha,i) => {
+    linha.querySelector('input').setAttribute('aria-label', `${nome} ${i+1}`);
+    const remover = linha.querySelector('button'); remover.setAttribute('aria-label', `Remover ${nome.toLowerCase()} ${i+1}`); remover.title = remover.getAttribute('aria-label');
+  });
+}
+function adicionarItem(id, nome, valor, limite, maximo) {
+  const container = $(id);
+  if (container.children.length >= maximo) { notaStatus(`Limite de ${maximo} itens atingido.`, 'err'); return; }
+  const linha = document.createElement('div'); linha.className = 'item-row';
+  const input = document.createElement('input'); input.type = 'text'; input.value = valor || ''; input.maxLength = limite; input.required = true;
+  const remover = botaoIcone('remover', `Remover ${nome.toLowerCase()}`, 'danger');
+  remover.addEventListener('click',()=>{linha.remove();renumerarItens(container,nome);invalidarConsulta();});
+  linha.append(input,remover);container.append(linha);renumerarItens(container,nome);
+}
+function adicionarProduto(valor='') { adicionarItem('notaProdutos','Produto / serviço',valor,1000,200); }
+function adicionarClassificacao(valor='') { adicionarItem('notaClassificacoes','Classificação',valor,120,30); }
 function adicionarParcela(parcela = {}) {
-  const linha = document.createElement('div');
-  linha.className = 'parcelas';
+  if ($('notaParcelas').children.length >= 120) return;
+  const linha = document.createElement('div'); linha.className = 'parcelas';
   const numero = document.createElement('span'); numero.className = 'numero';
-  const vencimento = document.createElement('input'); vencimento.type = 'date'; vencimento.required = true;
-  vencimento.value = isoData(parcela.dataVencimento);
-  const valor = document.createElement('input'); valor.type = 'number'; valor.min = '0.01'; valor.step = '0.01'; valor.required = true;
-  valor.value = parcela.valor ?? '';
-  const remover = document.createElement('button'); remover.type = 'button'; remover.textContent = 'Remover';
-  remover.addEventListener('click', () => {linha.remove(); renumerarParcelas(); invalidarConsulta();});
-  linha.append(numero, vencimento, valor, remover);
-  $('notaParcelas').append(linha);
-  renumerarParcelas();
+  const vencimento = document.createElement('input'); vencimento.type = 'date'; vencimento.required = true; vencimento.value = isoData(parcela.dataVencimento);
+  const dinheiro = document.createElement('div'); dinheiro.className='money-input';
+  const prefixo = document.createElement('span');prefixo.textContent='R$';prefixo.setAttribute('aria-hidden','true');
+  const valor = document.createElement('input');valor.type='text';valor.inputMode='decimal';valor.className='valor-moeda';valor.required=true;valor.placeholder='0,00';
+  prepararMoeda(valor,parcela.valor ?? '');dinheiro.append(prefixo,valor);
+  const remover = botaoIcone('remover','Remover parcela','danger');
+  remover.addEventListener('click',()=>{linha.remove();renumerarParcelas();invalidarConsulta();atualizarSoma();});
+  linha.append(numero,vencimento,dinheiro,remover);$('notaParcelas').append(linha);renumerarParcelas();atualizarSoma();
 }
 function renumerarParcelas() {
-  [...$('notaParcelas').children].forEach((linha, i) => {
-    linha.querySelector('.numero').textContent = i+1;
-    linha.querySelector('input[type=date]').setAttribute('aria-label', `Vencimento da parcela ${i+1}`);
-    linha.querySelector('input[type=number]').setAttribute('aria-label', `Valor da parcela ${i+1} em reais`);
+  [...$('notaParcelas').children].forEach((linha,i)=>{
+    linha.querySelector('.numero').textContent=i+1;
+    linha.querySelector('input[type=date]').setAttribute('aria-label',`Vencimento da parcela ${i+1}`);
+    linha.querySelector('.valor-moeda').setAttribute('aria-label',`Valor da parcela ${i+1} em reais`);
+    linha.querySelector('button').setAttribute('aria-label',`Remover parcela ${i+1}`);
   });
 }
 function abrirNota(dados = {}, arquivo = null, id = null) {
-  arquivoNota = arquivo; contaEditando = id; origemNota = arquivo ? 'extracao' : 'manual';
-  invalidarConsulta(); notaStatus('');
-  $('editorTitulo').textContent = id ? `Editar conta #${id}` : 'Revisar dados da nota';
-  $('lancarBtn').textContent = id ? 'Salvar alterações da conta' : 'Confirmar e lançar conta';
-  $('notaTipo').value = dados.tipo || 'APAGAR';
-  $('notaNumero').value = dados.numeroNotaFiscal || dados.numero_nota_fiscal || '';
-  $('notaEmissao').value = isoData(dados.dataEmissao || dados.data_emissao);
-  $('notaTotal').value = dados.valorTotal ?? dados.valor_total ?? '';
-  $('notaDescricao').value = dados.descricaoProdutos || dados.descricao_produtos || '';
-  $('notaRazao').value = dados.fornecedor?.razaoSocial || '';
-  $('notaFantasia').value = dados.fornecedor?.fantasia || '';
-  $('notaCnpj').value = dados.fornecedor?.cnpj || '';
-  $('notaNome').value = dados.faturado?.nomeCompleto || '';
-  $('notaCpfCnpj').value = dados.faturado?.cpfCnpj || dados.faturado?.cpf || dados.faturado?.cnpj || '';
-  $('notaCategorias').value = (dados.classificacoes || [dados.classificacaoDespesa || '']).join('\n');
-  $('notaParcelas').replaceChildren();
-  const parcelas = dados.parcelas?.length ? dados.parcelas : [{valor: dados.valorTotal ?? ''}];
-  parcelas.forEach(adicionarParcela);
-  atualizarTipo();
-  notaEditor.classList.remove('hidden');
-  notaEditor.scrollIntoView({behavior:'smooth', block:'start'});
+  arquivoNota=arquivo;contaEditando=id;origemNota=arquivo ? (dados._ruralfin?.origem==='json_salvo'?'json_salvo':'extracao') : 'manual';
+  invalidarConsulta();notaStatus('');
+  $('editorTitulo').textContent=id?`Revisar conta #${id}`:'Revisar dados da nota';
+  $('lancarBtn').textContent=id?'Salvar alterações da conta':'Confirmar e lançar conta';
+  $('notaTipo').value=dados.tipo||'APAGAR';$('notaNumero').value=dados.numeroNotaFiscal||dados.numero_nota_fiscal||'';
+  $('notaEmissao').value=isoData(dados.dataEmissao||dados.data_emissao);
+  const total=dados.valorTotal??dados.valor_total;
+  $('notaTotal').value=total==null?'':Number(total).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});$('notaTotal').setCustomValidity('');
+  $('notaRazao').value=dados.fornecedor?.razaoSocial||'';$('notaFantasia').value=dados.fornecedor?.fantasia||'';$('notaCnpj').value=dados.fornecedor?.cnpj||'';
+  $('notaNome').value=dados.faturado?.nomeCompleto||'';$('notaCpfCnpj').value=dados.faturado?.cpfCnpj||dados.faturado?.cpf||dados.faturado?.cnpj||'';
+  $('notaProdutos').replaceChildren();
+  const produtos=Array.isArray(dados.produtos)?dados.produtos:String(dados.descricaoProdutos||dados.descricao_produtos||'').split('\n').filter(Boolean);
+  produtos.forEach(adicionarProduto);
+  $('notaClassificacoes').replaceChildren();(dados.classificacoes||[dados.classificacaoDespesa||'']).forEach(adicionarClassificacao);
+  $('notaParcelas').replaceChildren();(dados.parcelas?.length?dados.parcelas:[{valor:total??''}]).forEach(adicionarParcela);
+  const novaManual=!arquivo&&!id;bloquearNota(!novaManual);abrirRevisao(novaManual);atualizarTipo();atualizarSoma();notaEditor.classList.remove('hidden');
 }
 function obterNota() {
-  return {
-    tipo: $('notaTipo').value, numeroNotaFiscal: $('notaNumero').value, dataEmissao: $('notaEmissao').value,
-    valorTotal: $('notaTotal').value, descricaoProdutos: $('notaDescricao').value,
-    fornecedor: {razaoSocial: $('notaRazao').value, fantasia: $('notaFantasia').value, cnpj: $('notaCnpj').value},
-    faturado: {nomeCompleto: $('notaNome').value, cpfCnpj: $('notaCpfCnpj').value},
-    classificacoes: $('notaCategorias').value.split('\n').map(s=>s.trim()).filter(Boolean),
-    parcelas: [...$('notaParcelas').children].map((linha, i)=>({numero:i+1,
-      dataVencimento:linha.querySelector('input[type=date]').value, valor:linha.querySelector('input[type=number]').value})),
-  };
+  const produtos=[...$('notaProdutos').querySelectorAll('input')].map(i=>i.value.trim()).filter(Boolean);
+  return {tipo:$('notaTipo').value,numeroNotaFiscal:$('notaNumero').value,dataEmissao:$('notaEmissao').value,valorTotal:moedaDecimal($('notaTotal').value),
+    produtos,descricaoProdutos:produtos.join('\n'),fornecedor:{razaoSocial:$('notaRazao').value,fantasia:$('notaFantasia').value,cnpj:$('notaCnpj').value},
+    faturado:{nomeCompleto:$('notaNome').value,cpfCnpj:$('notaCpfCnpj').value},
+    classificacoes:[...$('notaClassificacoes').querySelectorAll('input')].map(i=>i.value.trim()).filter(Boolean),
+    parcelas:[...$('notaParcelas').children].map((linha,i)=>({numero:i+1,dataVencimento:linha.querySelector('input[type=date]').value,valor:moedaDecimal(linha.querySelector('.valor-moeda').value)}))};
 }
-function atualizarTipo() { $('pessoaTitulo').textContent = $('notaTipo').value === 'APAGAR' ? 'Fornecedor' : 'Cliente'; }
-$('notaTipo').addEventListener('change', atualizarTipo);
-$('notaForm').addEventListener('input', invalidarConsulta);
-$('notaForm').addEventListener('change', invalidarConsulta);
-$('adicionarParcela').addEventListener('click', ()=>{adicionarParcela();invalidarConsulta();});
-$('cancelarNota').addEventListener('click', ()=>{notaEditor.classList.add('hidden');invalidarConsulta();});
-function mostrarConsulta(titulo, registro) {
-  const bloco = document.createElement('div'); bloco.className = 'consulta' + (registro.existe && registro.status === 'ATIVO' ? '' : ' pendente');
-  const cabecalho = document.createElement('strong'); cabecalho.textContent = titulo;
-  const nome = document.createElement('span'); nome.textContent = registro.nome;
-  const doc = document.createElement('span'); doc.textContent = registro.documento || '';
-  const situacao = document.createElement('strong'); situacao.textContent = registro.mensagem;
-  bloco.append(cabecalho,nome,doc,situacao);
-  if(registro.nomeCadastrado && registro.nomeCadastrado !== registro.nome) {
-    const aviso = document.createElement('span'); aviso.textContent = `Nome no cadastro: ${registro.nomeCadastrado}. O cadastro existente será utilizado.`; bloco.append(aviso);
-  }
+function atualizarTipo(){ $('pessoaTitulo').textContent=$('notaTipo').value==='APAGAR'?'Fornecedor':'Cliente'; }
+$('notaTipo').addEventListener('change',atualizarTipo);
+$('notaForm').addEventListener('input',invalidarConsulta);$('notaForm').addEventListener('change',invalidarConsulta);
+$('adicionarProduto').addEventListener('click',()=>{adicionarProduto();invalidarConsulta();});
+$('adicionarClassificacao').addEventListener('click',()=>{adicionarClassificacao();invalidarConsulta();});
+$('adicionarParcela').addEventListener('click',()=>{adicionarParcela();invalidarConsulta();});
+$('cancelarNota').addEventListener('click',()=>abrirRevisao(false));
+function mostrarConsulta(titulo,registro){
+  const bloco=document.createElement('div');bloco.className='consulta'+(registro.existe&&registro.status==='ATIVO'?'':' pendente');
+  const cabecalho=document.createElement('strong');cabecalho.textContent=titulo;
+  const nome=document.createElement('span');nome.textContent=registro.nome;
+  const doc=document.createElement('span');doc.textContent=documentoFormatado(registro.documento||'');
+  const situacao=document.createElement('strong');situacao.textContent=registro.mensagem;bloco.append(cabecalho,nome,doc,situacao);
+  if(registro.nomeCadastrado&&registro.nomeCadastrado!==registro.nome){const aviso=document.createElement('span');aviso.textContent=`Nome no cadastro: ${registro.nomeCadastrado}. O cadastro existente será utilizado.`;bloco.append(aviso);}
   $('consultaResultado').append(bloco);
 }
-$('notaForm').addEventListener('submit', async evento=>{
-  evento.preventDefault(); invalidarConsulta(); const nota = obterNota();
-  $('analisarBtn').disabled = true; notaStatus('Consultando o PostgreSQL...');
-  try {
-    const resultado = await api('/api/analisar', {method:'POST',body:JSON.stringify(nota)});
-    const duplicadaPropria = contaEditando && resultado.duplicada?.id === contaEditando;
-    const inativo = [resultado.fornecedor,resultado.faturado,...resultado.classificacoes].some(r=>r.status==='INATIVO');
-    $('consultaResultado').replaceChildren();
-    mostrarConsulta(nota.tipo==='APAGAR'?'FORNECEDOR':'CLIENTE', resultado.fornecedor);
-    mostrarConsulta('FATURADO', resultado.faturado);
-    resultado.classificacoes.forEach(r=>mostrarConsulta(nota.tipo==='APAGAR'?'DESPESA':'RECEITA',r));
-    $('consultaResultado').classList.remove('hidden');
-    // Uma resposta de uma consulta antiga não autoriza salvar dados já alterados.
-    if (JSON.stringify(nota) !== JSON.stringify(obterNota())) {invalidarConsulta();notaStatus('Dados alterados. Consulte novamente.');return;}
-    if (resultado.podeLancar || (duplicadaPropria && !inativo)) {
-      notaConsultada = JSON.stringify(nota); $('lancarActions').classList.remove('hidden');
-      notaStatus(duplicadaPropria?'Dados conferidos. Confirme as alterações.':resultado.orientacao);
-    } else notaStatus(resultado.orientacao,'err');
-  } catch(erro) {notaStatus(erro.message,'err');}
-  finally {$('analisarBtn').disabled=false;}
+$('notaForm').addEventListener('submit',async evento=>{
+  evento.preventDefault();invalidarConsulta();
+  if(contaEditando&&$('notaCampos').disabled){notaStatus('Use o cadeado e confirme o desbloqueio antes de alterar esta conta.','err');return;}
+  const nota=obterNota();$('analisarBtn').disabled=true;notaStatus('Consultando o PostgreSQL...');
+  try{
+    const resultado=await api('/api/analisar',{method:'POST',body:JSON.stringify(nota)});
+    const duplicadaPropria=contaEditando&&resultado.duplicada?.id===contaEditando;
+    const inativo=[resultado.fornecedor,resultado.faturado,...resultado.classificacoes].some(r=>r.status==='INATIVO');
+    $('consultaResultado').replaceChildren();mostrarConsulta(nota.tipo==='APAGAR'?'FORNECEDOR':'CLIENTE',resultado.fornecedor);mostrarConsulta('FATURADO',resultado.faturado);
+    resultado.classificacoes.forEach(r=>mostrarConsulta(nota.tipo==='APAGAR'?'DESPESA':'RECEITA',r));$('consultaResultado').classList.remove('hidden');
+    if(JSON.stringify(nota)!==JSON.stringify(obterNota())||(contaEditando&&$('notaCampos').disabled)){invalidarConsulta();notaStatus('Dados alterados ou edição bloqueada. Consulte novamente.');return;}
+    if(resultado.podeLancar||(duplicadaPropria&&!inativo)){notaConsultada=JSON.stringify(nota);$('lancarActions').classList.remove('hidden');notaStatus(duplicadaPropria?'Dados conferidos. Confirme as alterações.':resultado.orientacao);}
+    else notaStatus(resultado.orientacao,'err');
+  }catch(erro){notaStatus(erro.message,'err');}finally{$('analisarBtn').disabled=false;}
 });
-$('lancarBtn').addEventListener('click', async()=>{
-  const nota = obterNota();
-  if(notaConsultada !== JSON.stringify(nota)) {invalidarConsulta();notaStatus('Consulte novamente antes de confirmar.','err');return;}
-  $('lancarBtn').disabled=true; $('analisarBtn').disabled=true; notaStatus('Gravando conta e parcelas...');
-  try {
+$('lancarBtn').addEventListener('click',async()=>{
+  const nota=obterNota();
+  if(contaEditando&&$('notaCampos').disabled){invalidarConsulta();notaStatus('Desbloqueie a edição e consulte novamente.','err');return;}
+  if(notaConsultada!==JSON.stringify(nota)){invalidarConsulta();notaStatus('Consulte novamente antes de confirmar.','err');return;}
+  $('lancarBtn').disabled=true;$('analisarBtn').disabled=true;notaStatus('Gravando conta e parcelas...');
+  try{
     let resultado;
-    if(contaEditando) resultado=await api(`/api/cadastros/contas/${contaEditando}`,{method:'PUT',body:JSON.stringify(nota)});
-    else {
-      const form = new FormData(); form.append('dados', JSON.stringify(nota)); form.append('origem', origemNota);
-      if(arquivoNota) form.append('pdf', arquivoNota);
-      resultado=await api('/api/lancar',{method:'POST',body:form});
-    }
-    invalidarConsulta(); notaStatus(`${resultado.mensagem} Conta #${resultado.id}.`,'ok');
-    window.dispatchEvent(new CustomEvent('contaSalva',{detail:resultado}));
-  } catch(erro){notaStatus(erro.message,'err');}
-  finally{$('lancarBtn').disabled=false;$('analisarBtn').disabled=false;}
+    if(contaEditando)resultado=await api(`/api/cadastros/contas/${contaEditando}`,{method:'PUT',body:JSON.stringify(nota)});
+    else{const form=new FormData();form.append('dados',JSON.stringify(nota));form.append('origem',origemNota);if(arquivoNota)form.append('pdf',arquivoNota);resultado=await api('/api/lancar',{method:'POST',body:form});}
+    invalidarConsulta();bloquearNota(true);notaStatus(`${resultado.mensagem} Conta #${resultado.id}.`,'ok');window.dispatchEvent(new CustomEvent('contaSalva',{detail:resultado}));
+  }catch(erro){notaStatus(erro.message,'err');}finally{$('lancarBtn').disabled=false;$('analisarBtn').disabled=false;}
 });
-
+bloquearNota(true);
 </script>
     {% endif %}
     {% if recurso is defined %}
@@ -568,23 +677,25 @@ const colunasTabela=configs[recursoCadastro];
 async function apiCadastro(url, options={}) {
   const headers={...options.headers,'X-CSRF-Token':document.querySelector('meta[name="csrf-token"]').content};
   if(options.body) headers['Content-Type']='application/json';
-  const res=await fetch(url,{...options,headers}); const dados=await res.json();
-  if(!res.ok) throw new Error(dados.error||'Falha na operação.'); return dados;
+  return lerResposta(await fetch(url,{...options,headers}));
 }
 function mensagemCadastro(texto,tipo=''){el('cadastroStatus').textContent=texto;el('cadastroStatus').className='status '+tipo;}
 function vazio(texto){const tr=document.createElement('tr');const td=document.createElement('td');td.colSpan=colunasTabela.length+1;td.textContent=texto;tr.append(td);el('registros').replaceChildren(tr);}
 function cabecalhoTabela(){
+  const larguras={pessoas:[54,150,255,135,174,94,124],classificacoes:[60,140,540,100,124],contas:[54,88,92,104,160,160,124,94,140]}[recursoCadastro];
+  el('colunasTabela').replaceChildren(...larguras.map(l=>{const c=document.createElement('col');c.style.width=l+'px';return c;}));
   const tr=document.createElement('tr');
   colunasTabela.forEach(([campo,nome])=>{
-    const th=document.createElement('th');th.scope='col';
-    {const b=document.createElement('button');b.type='button';b.textContent=nome+(ordemTabela===campo?(direcaoTabela==='asc'?' ↑':' ↓'):'');
+    const th=document.createElement('th');th.scope='col';th.dataset.campo=campo;
+    {const b=document.createElement('button');b.type='button';b.title='Ordenar por '+nome;b.setAttribute('aria-label','Ordenar por '+nome);b.textContent=nome+(ordemTabela===campo?(direcaoTabela==='asc'?' ↑':' ↓'):'');
       th.setAttribute('aria-sort',ordemTabela===campo?(direcaoTabela==='asc'?'ascending':'descending'):'none');
       b.addEventListener('click',()=>{direcaoTabela=ordemTabela===campo&&direcaoTabela==='asc'?'desc':'asc';ordemTabela=campo;paginaTabela=1;cabecalhoTabela();if(buscaRealizada)carregarTabela();});th.append(b);}
     tr.append(th);
-  });const a=document.createElement('th');a.scope='col';a.textContent='Ações';tr.append(a);el('cabecalho').replaceChildren(tr);
+  });const a=document.createElement('th');a.scope='col';a.className='col-acoes';a.textContent='Ações';tr.append(a);el('cabecalho').replaceChildren(tr);
 }
 function formatarTabela(campo,valor){
-  if(campo==='valor_total') return Number(valor).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(campo==='valor_total') return reais(valor);
+  if(campo==='documento') return documentoFormatado(valor);
   if(campo==='data_emissao') return String(valor).split('-').reverse().join('/');
   if(campo==='tipo') return {'APAGAR':'A pagar','ARECEBER':'A receber','CLIENTE-FORNECEDOR':'Cliente / fornecedor','FATURADO':'Faturado','DESPESA':'Despesa','RECEITA':'Receita'}[valor]||valor;
   return valor??'';
@@ -598,12 +709,14 @@ async function carregarTabela(){
     el('registros').replaceChildren();
     if(!dados.registros.length) vazio('Nenhum registro encontrado.');
     dados.registros.forEach(r=>{
-      const tr=document.createElement('tr');colunasTabela.forEach(([campo])=>{const td=document.createElement('td');td.textContent=formatarTabela(campo,r[campo]);tr.append(td);});
-      const td=document.createElement('td');
-      const editar=document.createElement('button');editar.textContent='Editar';editar.addEventListener('click',()=>abrirCadastro(r.id));td.append(editar);
-      const status=document.createElement('button');status.textContent=r.status==='ATIVO'?'Inativar':'Reativar';status.className=r.status==='ATIVO'?'danger':'';
-      status.addEventListener('click',()=>mudarStatus(r));td.append(status);
-      if(recursoCadastro==='contas'){const doc=document.createElement('button');doc.textContent='PDF';doc.addEventListener('click',()=>abrirDocumento(r.id));td.append(doc);}
+      const tr=document.createElement('tr');colunasTabela.forEach(([campo])=>{const td=document.createElement('td');td.dataset.campo=campo;td.textContent=formatarTabela(campo,r[campo]);tr.append(td);});
+      const td=document.createElement('td');td.className='col-acoes';
+      const acoes=document.createElement('div');acoes.className='row-actions';
+      const editar=botaoIcone('editar',`Revisar registro #${r.id}`);editar.addEventListener('click',()=>abrirCadastro(r.id));acoes.append(editar);
+      const status=botaoIcone(r.status==='ATIVO'?'inativar':'reativar',`${r.status==='ATIVO'?'Inativar':'Reativar'} registro #${r.id}`,r.status==='ATIVO'?'danger':'');
+      status.addEventListener('click',()=>mudarStatus(r));acoes.append(status);
+      if(recursoCadastro==='contas'){const doc=botaoIcone('pdf',`Abrir PDF da conta #${r.id}`);doc.addEventListener('click',()=>abrirDocumento(r.id));acoes.append(doc);}
+      td.append(acoes);
       tr.append(td);el('registros').append(tr);
     });
     el('contador').textContent=`${dados.total} registro(s) · Página ${paginaTabela}`;
@@ -624,12 +737,13 @@ async function abrirCadastro(id=null){
     el('tipo').value=r.tipo||(recursoCadastro==='pessoas'?'CLIENTE-FORNECEDOR':'DESPESA');
     if(recursoCadastro==='pessoas'){el('razao').value=r.razao_social||'';el('fantasia').value=r.fantasia||'';el('documento').value=r.documento||'';}
     else el('descricao').value=r.descricao||'';
+    bloquearCadastro(Boolean(id));
     el('cadastroEditor').classList.remove('hidden');el('cadastroEditor').scrollIntoView({behavior:'smooth'});
   }catch(erro){mensagemCadastro(erro.message,'err');}
 }
 async function mudarStatus(registro){
   const inativar=registro.status==='ATIVO';
-  if(!confirm(inativar?`Inativar o registro #${registro.id}? O histórico será preservado.`:`Reativar o registro #${registro.id}?`))return;
+  if(!await confirmarAcao(inativar?`Inativar o registro #${registro.id}? O histórico será preservado.`:`Reativar o registro #${registro.id}?`))return;
   try{await apiCadastro(`/api/cadastros/${recursoCadastro}/${registro.id}${inativar?'':'/reativar'}`,{method:inativar?'DELETE':'POST'});await carregarTabela();}
   catch(erro){mensagemCadastro(erro.message,'err');}
 }
@@ -637,17 +751,24 @@ el('buscarForm').addEventListener('submit',e=>{e.preventDefault();buscaRealizada
 el('todosBtn').addEventListener('click',()=>{el('busca').value='';el('situacao').value='ATIVO';buscaAtual='';statusAtual='ATIVO';paginaTabela=1;buscaRealizada=true;carregarTabela();});
 el('anteriorBtn').addEventListener('click',()=>{paginaTabela--;carregarTabela();});el('proximaBtn').addEventListener('click',()=>{paginaTabela++;carregarTabela();});
 el('novoBtn').addEventListener('click',()=>abrirCadastro());
+function bloquearCadastro(bloqueado){
+  el('cadastroCampos').disabled=bloqueado;el('salvarCadastro').disabled=bloqueado;
+  el('cadeadoCadastro').innerHTML=icone(bloqueado?'cadeado':'aberto');
+  const acao=bloqueado?'Desbloquear edição do cadastro':'Bloquear edição do cadastro';el('cadeadoCadastro').setAttribute('aria-label',acao);el('cadeadoCadastro').title=acao;
+  el('avisoCadastro').textContent=bloqueado?'Dados protegidos. Use o cadeado e confirme para alterar.':'Edição liberada. Novos cadastros ficam ativos automaticamente.';
+}
 if(recursoCadastro!=='contas'){
+  el('cadeadoCadastro').addEventListener('click',async()=>{if(el('cadastroCampos').disabled&&!await confirmarAcao('Deseja desbloquear este cadastro para fazer alterações?'))return;bloquearCadastro(!el('cadastroCampos').disabled);});
   el('cancelarCadastro').addEventListener('click',()=>el('cadastroEditor').classList.add('hidden'));
   el('cadastroForm').addEventListener('submit',async e=>{
-    e.preventDefault();el('salvarCadastro').disabled=true;
+    e.preventDefault();if(el('cadastroCampos').disabled)return;el('salvarCadastro').disabled=true;
     const dados={tipo:el('tipo').value};
     if(recursoCadastro==='pessoas')Object.assign(dados,{razao_social:el('razao').value,fantasia:el('fantasia').value,documento:el('documento').value});
     else dados.descricao=el('descricao').value;
     try{await apiCadastro(`/api/cadastros/${recursoCadastro}${registroEditando?'/'+registroEditando:''}`,{method:registroEditando?'PUT':'POST',body:JSON.stringify(dados)});
       el('cadastroEditor').classList.add('hidden');if(buscaRealizada)await carregarTabela();mensagemCadastro('Registro salvo com sucesso.','ok');}
     catch(erro){mensagemCadastro(erro.message,'err');el('cadastroStatus').scrollIntoView({behavior:'smooth'});}
-    finally{el('salvarCadastro').disabled=false;}
+    finally{el('salvarCadastro').disabled=el('cadastroCampos').disabled;}
   });
 }
 window.addEventListener('contaSalva',()=>{if(buscaRealizada)carregarTabela();});
@@ -672,6 +793,7 @@ const tabJson = document.getElementById("tab-json");
 const classificacaoBadge = document.getElementById("classificacaoBadge");
 
 fileInput.addEventListener("change", () => {
+  encerrarExtracao();setStatus("", "");document.getElementById("jsonStatus").textContent="";
   extractedData = null;
   resultCard.classList.add('hidden');
   notaEditor.classList.add('hidden');
@@ -716,18 +838,13 @@ function setStatus(msg, type) {
 }
 
 // Envia o PDF para o backend Flask, que chama o Gemini pelo servidor
-async function extractViaBackend(file, apiKey) {
+async function extractViaBackend(file, apiKey, signal) {
   const formData = new FormData();
   formData.append("pdf", file);
   formData.append("apiKey", apiKey);
 
-  const res = await fetch("/api/extrair", { method: "POST", body: formData, headers: {'X-CSRF-Token': csrfToken} });
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || "Erro desconhecido ao extrair dados.");
-  }
-  return data;
+  const res = await fetch("/api/extrair", { method: "POST", body: formData, signal, headers: {'X-CSRF-Token': csrfToken} });
+  return lerResposta(res);
 }
 
 function renderFormatted(d) {
@@ -744,19 +861,19 @@ function renderFormatted(d) {
     <div class="section-title">Nota Fiscal</div>
     <div class="field"><span class="k">Número</span><span class="v">${d.numeroNotaFiscal || "-"}</span></div>
     <div class="field"><span class="k">Data de Emissão</span><span class="v">${d.dataEmissao || "-"}</span></div>
-    <div class="field"><span class="k">Valor Total</span><span class="v">R$ ${Number(d.valorTotal || 0).toFixed(2)}</span></div>
+    <div class="field"><span class="k">Valor Total</span><span class="v">${reais(d.valorTotal)}</span></div>
 
     <div class="section-title">Fornecedor</div>
     <div class="field"><span class="k">Razão Social</span><span class="v">${fornecedor.razaoSocial || "-"}</span></div>
     <div class="field"><span class="k">Fantasia</span><span class="v">${fornecedor.fantasia || "-"}</span></div>
-    <div class="field"><span class="k">CNPJ</span><span class="v">${fornecedor.cnpj || "-"}</span></div>
+    <div class="field"><span class="k">CPF/CNPJ</span><span class="v">${documentoFormatado(fornecedor.cnpj) || "-"}</span></div>
 
     <div class="section-title">Faturado</div>
     <div class="field"><span class="k">Nome / razão social</span><span class="v">${faturado.nomeCompleto || "-"}</span></div>
-    <div class="field"><span class="k">CPF/CNPJ</span><span class="v">${faturado.cpfCnpj || faturado.cpf || faturado.cnpj || "-"}</span></div>
+    <div class="field"><span class="k">CPF/CNPJ</span><span class="v">${documentoFormatado(faturado.cpfCnpj || faturado.cpf || faturado.cnpj) || "-"}</span></div>
 
     <div class="section-title">Produtos</div>
-    <div class="field"><span class="v" style="text-align:left;max-width:100%;">${d.descricaoProdutos || "-"}</span></div>
+    <ul class="products-view">${(d.produtos || String(d.descricaoProdutos || '').split('\n').filter(Boolean)).map(p=>`<li>${p}</li>`).join('') || '<li>Nenhum produto identificado</li>'}</ul>
 
     <div class="section-title">Parcelas (${parcelas.length})</div>
   `;
@@ -765,13 +882,15 @@ function renderFormatted(d) {
     html += `<div class="field"><span class="k">Nenhuma parcela identificada</span></div>`;
   } else {
     parcelas.forEach(p => {
-      html += `<div class="field"><span class="k">Parcela ${p.numero || "-"} — Venc. ${p.dataVencimento || "-"}</span><span class="v">R$ ${Number(p.valor || 0).toFixed(2)}</span></div>`;
+      html += `<div class="field"><span class="k">Parcela ${p.numero || "-"} — Venc. ${p.dataVencimento || "-"}</span><span class="v">${reais(p.valor)}</span></div>`;
     });
   }
 
+  const classificacoes=d.classificacoes||[d.classificacaoDespesa||'Sem classificação'];
+  html += `<div class="section-title">Classificações</div><ul class="products-view">${classificacoes.map(c=>`<li>${c}</li>`).join('')}</ul>`;
   tabFormatted.innerHTML = html;
   tabJson.textContent = JSON.stringify(original, null, 2);
-  classificacaoBadge.textContent = original.classificacaoDespesa || "Sem classificação";
+  classificacaoBadge.textContent = original.classificacoes?.join(" · ") || original.classificacaoDespesa || "Sem classificação";
 }
 
 function buildTxt(d) {
@@ -784,17 +903,17 @@ function buildTxt(d) {
   lines.push("================================");
   lines.push(`Número da Nota Fiscal: ${d.numeroNotaFiscal || "-"}`);
   lines.push(`Data de Emissão: ${d.dataEmissao || "-"}`);
-  lines.push(`Valor Total: R$ ${Number(d.valorTotal || 0).toFixed(2)}`);
+  lines.push(`Valor Total: ${reais(d.valorTotal)}`);
   lines.push(`Classificação da Despesa: ${d.classificacaoDespesa || "-"}`);
   lines.push("");
   lines.push("FORNECEDOR");
   lines.push(`  Razão Social: ${fornecedor.razaoSocial || "-"}`);
   lines.push(`  Fantasia: ${fornecedor.fantasia || "-"}`);
-  lines.push(`  CNPJ: ${fornecedor.cnpj || "-"}`);
+  lines.push(`  CNPJ: ${documentoFormatado(fornecedor.cnpj) || "-"}`);
   lines.push("");
   lines.push("FATURADO");
   lines.push(`  Nome / razão social: ${faturado.nomeCompleto || "-"}`);
-  lines.push(`  CPF/CNPJ: ${faturado.cpfCnpj || faturado.cpf || faturado.cnpj || "-"}`);
+  lines.push(`  CPF/CNPJ: ${documentoFormatado(faturado.cpfCnpj || faturado.cpf || faturado.cnpj) || "-"}`);
   lines.push("");
   lines.push("PRODUTOS");
   lines.push(`  ${d.descricaoProdutos || "-"}`);
@@ -804,7 +923,7 @@ function buildTxt(d) {
     lines.push("  Nenhuma parcela identificada");
   } else {
     parcelas.forEach(p => {
-      lines.push(`  Parcela ${p.numero || "-"} | Vencimento: ${p.dataVencimento || "-"} | Valor: R$ ${Number(p.valor || 0).toFixed(2)}`);
+      lines.push(`  Parcela ${p.numero || "-"} | Vencimento: ${p.dataVencimento || "-"} | Valor: ${reais(p.valor)}`);
     });
   }
   return lines.join("\n");
@@ -813,50 +932,56 @@ function buildTxt(d) {
 function downloadFile(content, filename, mime) {
   const blob = new Blob([content], { type: mime });
   const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
+  const url=URL.createObjectURL(blob);link.href=url;
   link.download = filename;
   document.body.appendChild(link);
   link.click();
-  document.body.removeChild(link);
+  document.body.removeChild(link);setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
-const extractIconHTML = extractBtn.innerHTML;
-const spinnerIconHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2.5px;"></span>';
-
-extractBtn.addEventListener("click", async () => {
-  const apiKey = apiKeyInput.value.trim();
-
-  if (!selectedFile) {
-    setStatus("Selecione um arquivo PDF.", "err");
-    return;
-  }
-
-  extractBtn.disabled = true;
-  fileInput.disabled = true;
-  notaEditor.classList.add('hidden');
-  extractBtn.innerHTML = spinnerIconHTML;
-  extractLabel.textContent = "Extraindo dados...";
-  setStatus("Enviando PDF para a IA, aguarde...", "");
-  resultCard.classList.add("hidden");
-
-  try {
-    const data = await extractViaBackend(selectedFile, apiKey);
-
-    extractedData = data;
-    renderFormatted(data);
-    resultCard.classList.remove("hidden");
-    abrirNota(data, selectedFile);
-    setStatus("Dados extraídos com sucesso.", "ok");
-    extractLabel.textContent = "Pronto! Clique na seta para extrair novamente";
-  } catch (err) {
-    console.error(err);
-    setStatus("Falha ao extrair dados: " + err.message, "err");
-    extractLabel.textContent = "Pronto! Clique na seta para extrair";
-  } finally {
-    extractBtn.disabled = false;
-    fileInput.disabled = false;
-    extractBtn.innerHTML = extractIconHTML;
-  }
+const extractIconHTML=extractBtn.innerHTML;
+let extracaoAtiva=null;
+function encerrarExtracao(){
+  if(extracaoAtiva){clearTimeout(extracaoAtiva.limite);clearInterval(extracaoAtiva.relogio);extracaoAtiva.controller.abort();extracaoAtiva=null;}
+  extractBtn.disabled=!selectedFile;fileInput.disabled=false;extractBtn.innerHTML=extractIconHTML;document.getElementById('cancelarExtracao').classList.add('hidden');
+}
+function mostrarExtracao(dados,origem){
+  extractedData=dados;renderFormatted(dados);resultCard.classList.remove('hidden');abrirNota(dados,selectedFile);
+  setStatus(origem==='json_salvo'?'Extração salva carregada. Não houve nova consulta ao Gemini. Confira os dados antes de lançar.':'Dados extraídos com sucesso. Salve o JSON se quiser reutilizar esta extração.','ok');
+  extractLabel.textContent='Pronto! Clique na seta para extrair novamente';
+}
+extractBtn.addEventListener('click',async()=>{
+  if(!selectedFile){setStatus('Selecione um arquivo PDF.','err');return;}
+  encerrarExtracao();
+  const contexto={controller:new AbortController(),inicio:Date.now(),demora:false};extracaoAtiva=contexto;
+  extractBtn.disabled=true;fileInput.disabled=true;notaEditor.classList.add('hidden');resultCard.classList.add('hidden');
+  extractBtn.innerHTML='<span class="spinner" style="width:20px;height:20px;border-width:2.5px;"></span>';
+  document.getElementById('cancelarExtracao').classList.remove('hidden');extractLabel.textContent='Extraindo dados...';setStatus('Enviando PDF para a IA, aguarde...','');
+  contexto.relogio=setInterval(()=>{
+    const segundos=Math.floor((Date.now()-contexto.inicio)/1000);extractLabel.textContent=`Extraindo dados... ${segundos}s`;
+    if(segundos===20)setStatus('A resposta está demorando. Você pode aguardar, cancelar ou usar uma extração salva em JSON.','');
+  },1000);
+  contexto.limite=setTimeout(()=>{contexto.demora=true;contexto.controller.abort();},110000);
+  try{
+    const dados=await extractViaBackend(selectedFile,apiKeyInput.value.trim(),contexto.controller.signal);
+    if(extracaoAtiva!==contexto)return;mostrarExtracao(dados,'gemini');
+  }catch(erro){
+    if(extracaoAtiva!==contexto)return;
+    setStatus(contexto.demora?'O tempo de espera terminou. Tente novamente ou use uma extração salva em JSON.':erro instanceof TypeError?'Não foi possível comunicar com o servidor. Confira a conexão e tente novamente.':'Falha ao extrair dados: '+erro.message,'err');
+    extractLabel.textContent='Pronto! Clique na seta para extrair';
+  }finally{if(extracaoAtiva===contexto)encerrarExtracao();}
+});
+document.getElementById('cancelarExtracao').addEventListener('click',()=>{encerrarExtracao();extractLabel.textContent='Pronto! Clique na seta para extrair';setStatus('Espera cancelada. Você pode tentar novamente ou abrir uma extração salva.','');});
+document.getElementById('jsonSalvo').addEventListener('change',async evento=>{
+  const input=evento.target,arquivo=input.files[0];if(!arquivo)return;
+  const status=document.getElementById('jsonStatus');status.textContent='';
+  if(!selectedFile){status.textContent='Selecione primeiro o PDF original no campo acima.';input.value='';return;}
+  if(arquivo.size>1024*1024){status.textContent='O JSON deve ter no máximo 1 MB.';input.value='';return;}
+  encerrarExtracao();input.disabled=true;status.textContent='Conferindo o JSON e seu vínculo com o PDF...';
+  try{
+    const form=new FormData();form.append('dados',await arquivo.text());form.append('pdf',selectedFile);
+    const dados=await api('/api/revisar-json',{method:'POST',body:form});mostrarExtracao(dados,'json_salvo');status.textContent='JSON e PDF conferidos. Extração carregada.';
+  }catch(erro){status.textContent=erro.message;}finally{input.disabled=false;input.value='';}
 });
 
 document.getElementById("downloadJson").addEventListener("click", () => {
