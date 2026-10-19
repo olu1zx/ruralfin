@@ -11,6 +11,43 @@ import pytest
 from app import conectar
 
 
+def test_versao_mostra_commit_publicado_e_data_em_brasilia(monkeypatch):
+    from app import app, informacoes_versao
+    codigo = 'a' * 40
+    monkeypatch.setenv('APP_COMMIT_SHA', codigo)
+    monkeypatch.setenv('APP_COMMIT_DATE', '2026-10-19T01:30:00+00:00')
+    monkeypatch.setitem(app.config, 'APP_PASSWORD', '')
+    informacoes_versao.cache_clear()
+    try:
+        versao = informacoes_versao()
+        assert versao['codigo'] == 'aaaaaaa'
+        assert versao['atualizado'] == '18/10/2026 às 22:30'
+        assert versao['commit_url'].endswith('/commit/' + codigo)
+        cliente = app.test_client()
+        html = cliente.get('/').get_data(as_text=True)
+        assert 'aria-label="Versão do sistema"' in html
+        assert '18/10/2026 às 22:30' in html and versao['commit_url'] in html
+        for rota in ('/login', '/cadastros/pessoas', '/cadastros/classificacoes', '/cadastros/contas'):
+            assert 'class="release-info"' not in cliente.get(rota).get_data(as_text=True)
+    finally:
+        informacoes_versao.cache_clear()
+
+
+def test_versao_sem_metadados_nao_inventa_data(monkeypatch):
+    from app import informacoes_versao
+    monkeypatch.setenv('VERCEL', '1')
+    monkeypatch.delenv('APP_COMMIT_SHA', raising=False)
+    monkeypatch.delenv('APP_COMMIT_DATE', raising=False)
+    monkeypatch.delenv('VERCEL_GIT_COMMIT_SHA', raising=False)
+    informacoes_versao.cache_clear()
+    try:
+        versao = informacoes_versao()
+        assert versao['codigo'] == 'local' and versao['commit_url'] is None
+        assert versao['atualizado_iso'] is None and versao['atualizado'] == 'Não informada'
+    finally:
+        informacoes_versao.cache_clear()
+
+
 def quantidade(app, tabela):
     with app.app_context(), conectar() as conn:
         return conn.execute(f'SELECT count(*) AS n FROM {tabela}').fetchone()['n']

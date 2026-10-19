@@ -20,7 +20,8 @@ import socket
 import subprocess
 import time
 import unicodedata
-from datetime import date, datetime
+from datetime import date, datetime, timedelta, timezone
+from functools import lru_cache
 from decimal import Decimal, InvalidOperation
 from io import BytesIO
 from pathlib import Path
@@ -38,6 +39,33 @@ from werkzeug.exceptions import HTTPException
 from werkzeug.utils import secure_filename
 
 load_dotenv(Path(__file__).parent / '.env')
+
+
+@lru_cache(maxsize=1)
+def informacoes_versao():
+    codigo = os.getenv('APP_COMMIT_SHA') or os.getenv('VERCEL_GIT_COMMIT_SHA', '')
+    atualizado = os.getenv('APP_COMMIT_DATE', '')
+    if not codigo and not os.getenv('VERCEL'):
+        try:
+            resultado = subprocess.run(['git', 'log', '-1', '--format=%H%n%cI'],
+                                       cwd=Path(__file__).parent, capture_output=True,
+                                       text=True, check=True, timeout=2)
+            codigo, atualizado = resultado.stdout.strip().splitlines()
+        except (OSError, ValueError, subprocess.SubprocessError):
+            pass
+    codigo = codigo if re.fullmatch(r'[0-9a-f]{40}', codigo) else ''
+    try:
+        instante = datetime.fromisoformat(atualizado)
+        if instante.tzinfo is None:
+            raise ValueError('Data da versão sem fuso horário.')
+        instante = instante.astimezone(timezone(timedelta(hours=-3)))
+        data_texto = instante.strftime('%d/%m/%Y às %H:%M')
+        data_iso = instante.isoformat()
+    except ValueError:
+        data_texto, data_iso = 'Não informada', None
+    return {'numero': '2.0', 'codigo': codigo[:7] if codigo else 'local',
+            'commit_url': f'https://github.com/olu1zx/ruralfin/commit/{codigo}' if codigo else None,
+            'atualizado': data_texto, 'atualizado_iso': data_iso}
 
 
 
@@ -874,7 +902,7 @@ Regras importantes:
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", versao=informacoes_versao())
 
 
 @app.get('/cadastros/<nome>')

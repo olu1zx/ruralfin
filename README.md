@@ -19,6 +19,13 @@ acesso; para extração de PDFs, informe sua chave do Gemini na interface.
 
 ## O que a segunda etapa faz
 
+A tela principal mostra no canto inferior a versão 2.0, a data e o código do
+commit publicado, com link para o GitHub. A data usa o horário de Brasília.
+Na publicação pelo terminal, envie `APP_COMMIT_SHA` e `APP_COMMIT_DATE` como
+variáveis dessa publicação, obtidas com `git rev-parse HEAD` e
+`git log -1 --format=%cI`. Na execução local, o sistema lê o último commit uma
+única vez ao iniciar; abrir a tela não consulta a API do GitHub.
+
 1. Recebe o PDF e mantém a extração de dados pelo Gemini da primeira etapa.
 2. Apresenta o JSON e um formulário para conferir ou corrigir os dados extraídos.
 3. Consulta fornecedor/cliente e faturado pelo CPF/CNPJ e classificação
