@@ -24,11 +24,12 @@ def test_versao_mostra_commit_publicado_e_data_em_brasilia(monkeypatch):
         assert versao['atualizado'] == '18/10/2026 às 22:30'
         assert versao['commit_url'].endswith('/commit/' + codigo)
         cliente = app.test_client()
-        html = cliente.get('/').get_data(as_text=True)
-        assert 'aria-label="Versão do sistema"' in html
-        assert '18/10/2026 às 22:30' in html and versao['commit_url'] in html
-        for rota in ('/login', '/cadastros/pessoas', '/cadastros/classificacoes', '/cadastros/contas'):
-            assert 'class="release-info"' not in cliente.get(rota).get_data(as_text=True)
+        for rota in ('/', '/cadastros/pessoas', '/cadastros/classificacoes', '/cadastros/contas'):
+            html = cliente.get(rota).get_data(as_text=True)
+            assert html.count('class="release-info"') == 1
+            assert 'aria-label="Versão do sistema"' in html
+            assert '18/10/2026 às 22:30' in html and versao['commit_url'] in html
+        assert 'class="release-info"' not in cliente.get('/login').get_data(as_text=True)
     finally:
         informacoes_versao.cache_clear()
 

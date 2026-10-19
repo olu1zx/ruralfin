@@ -712,7 +712,7 @@ def tokens_template():
     if 'csrf' not in session:
         session['csrf'] = secrets.token_urlsafe(32)
     return {'csrf_token': session['csrf'], 'login_ativo': bool(app.config['APP_PASSWORD']),
-            'pdf_max_mb': app.config['PDF_MAX_MB']}
+            'pdf_max_mb': app.config['PDF_MAX_MB'], 'versao': informacoes_versao()}
 
 
 @app.after_request
@@ -902,7 +902,7 @@ Regras importantes:
 
 @app.route("/")
 def index():
-    return render_template("index.html", versao=informacoes_versao())
+    return render_template("index.html")
 
 
 @app.get('/cadastros/<nome>')

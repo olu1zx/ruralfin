@@ -462,7 +462,7 @@ dialog{width:min(440px,calc(100% - 32px));border:1px solid var(--border);border-
   <!-- Mesmo editor para notas extraídas, criação manual e edição de contas. -->
 {{ editor_nota() }}
     {% endif %}
-    {% if versao is defined %}
+    {% if not tela_login %}
     <footer class="release-info" aria-label="Versão do sistema">
       <span>Versão <strong>{{ versao.numero }}</strong></span>
       <span>Última atualização: {% if versao.atualizado_iso %}<time datetime="{{ versao.atualizado_iso }}" title="Horário de Brasília">{{ versao.atualizado }}</time>{% else %}{{ versao.atualizado }}{% endif %}</span>

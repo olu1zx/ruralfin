@@ -19,7 +19,7 @@ acesso; para extração de PDFs, informe sua chave do Gemini na interface.
 
 ## O que a segunda etapa faz
 
-A tela principal mostra no canto inferior a versão 2.0, a data e o código do
+Todas as abas do sistema mostram no canto inferior a versão 2.0, a data e o código do
 commit publicado, com link para o GitHub. A data usa o horário de Brasília.
 Na publicação pelo terminal, envie `APP_COMMIT_SHA` e `APP_COMMIT_DATE` como
 variáveis dessa publicação, obtidas com `git rev-parse HEAD` e
